@@ -29,14 +29,15 @@ public class GameController implements ActionListener, KeyListener {
         }
         gamePanel.showRestartButton(false);
         gamePanel.repaint();
-        gameLoop.start();
+        gameLoop.stop();
+        gamePanel.requestFocusInWindow();
     }
 
     public void resetGame() {
         model.resetGame();
         gamePanel.showRestartButton(false);
         gameLoop.setDelay(100);
-        gameLoop.start();
+        gameLoop.stop();
         gamePanel.repaint();
         gamePanel.requestFocusInWindow();
     }
@@ -59,14 +60,7 @@ public class GameController implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-//        switch (e.getKeyCode()) {
-//            case KeyEvent.VK_UP -> model.changeDirection(0, -1);
-//            case KeyEvent.VK_DOWN -> model.changeDirection(0, 1);
-//            case KeyEvent.VK_LEFT -> model.changeDirection(-1, 0);
-//            case KeyEvent.VK_RIGHT -> model.changeDirection(1, 0);
-//            default -> {
-//            }
-//        }
+        boolean directionChanged = true;
         switch (e.getKeyCode()) {
             // Arrow keys
             case KeyEvent.VK_UP -> model.changeDirection(0, -1);
@@ -80,8 +74,11 @@ public class GameController implements ActionListener, KeyListener {
             case KeyEvent.VK_A -> model.changeDirection(-1, 0);
             case KeyEvent.VK_D -> model.changeDirection(1, 0);
 
-            default -> {
-            }
+            default -> directionChanged = false;
+        }
+
+        if (directionChanged && !gameLoop.isRunning() && !model.isGameOver()) {
+            gameLoop.start();
         }
     }
 

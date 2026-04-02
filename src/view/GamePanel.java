@@ -50,9 +50,17 @@ public class GamePanel extends JPanel {
     }
 
     private void drawGrid(Graphics g) {
-        for (int i = 0; i < model.getBoardWidth() / model.getTileSize(); i++) {
-            g.drawLine(i * model.getTileSize(), 0, i * model.getTileSize(), model.getBoardHeight());
-            g.drawLine(0, i * model.getTileSize(), model.getBoardWidth(), i * model.getTileSize());
+        int columns = model.getBoardWidth() / model.getTileSize();
+        int rows = model.getBoardHeight() / model.getTileSize();
+
+        for (int column = 0; column <= columns; column++) {
+            int x = column * model.getTileSize();
+            g.drawLine(x, 0, x, model.getBoardHeight());
+        }
+
+        for (int row = 0; row <= rows; row++) {
+            int y = row * model.getTileSize();
+            g.drawLine(0, y, model.getBoardWidth(), y);
         }
     }
 

@@ -36,7 +36,7 @@ public class SnakeGameModel {
         snakeBody.clear();
         food = new Tile(10, 10);
         velocityX = 0;
-        velocityY = 1;
+        velocityY = 0;
         gameOver = false;
         placeFood();
     }

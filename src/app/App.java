@@ -7,6 +7,7 @@ import view.MenuPanel;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import java.awt.Dimension;
 import java.awt.CardLayout;
 
 public class App {
@@ -18,6 +19,7 @@ public class App {
         JFrame frame = new JFrame("Snake");
         CardLayout cardLayout = new CardLayout();
         JPanel mainPanel = new JPanel(cardLayout);
+        mainPanel.setPreferredSize(new Dimension(boardWidth, boardHeight));
 
         SnakeGameModel gameModel = new SnakeGameModel(boardWidth, boardHeight, 25);
         GamePanel gamePanel = new GamePanel(gameModel);
@@ -34,10 +36,10 @@ public class App {
         mainPanel.add(gamePanel, "game");
 
         frame.add(mainPanel);
-        frame.setSize(boardWidth, boardHeight);
-        frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
         cardLayout.show(mainPanel, "menu");
