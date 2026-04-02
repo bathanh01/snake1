@@ -1,7 +1,7 @@
 package controller;
 
-import model.SnakeGameModel;
-import view.GamePanel;
+import model.TwoPlayerSnakeGameModel;
+import view.TwoPlayerGamePanel;
 
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
@@ -9,13 +9,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class GameController implements ActionListener, KeyListener {
+public class TwoPlayerGameController implements ActionListener, KeyListener {
 
-    private final SnakeGameModel model;
-    private final GamePanel gamePanel;
+    private final TwoPlayerSnakeGameModel model;
+    private final TwoPlayerGamePanel gamePanel;
     private final Timer gameLoop;
 
-    public GameController(SnakeGameModel model, GamePanel gamePanel) {
+    public TwoPlayerGameController(TwoPlayerSnakeGameModel model, TwoPlayerGamePanel gamePanel) {
         this.model = model;
         this.gamePanel = gamePanel;
         this.gameLoop = new Timer(100, this);
@@ -61,18 +61,17 @@ public class GameController implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         boolean directionChanged = true;
-        switch (e.getKeyCode()) {
-            // Arrow keys
-            case KeyEvent.VK_UP -> model.changeDirection(0, -1);
-            case KeyEvent.VK_DOWN -> model.changeDirection(0, 1);
-            case KeyEvent.VK_LEFT -> model.changeDirection(-1, 0);
-            case KeyEvent.VK_RIGHT -> model.changeDirection(1, 0);
 
-            // WASD keys
-            case KeyEvent.VK_W -> model.changeDirection(0, -1);
-            case KeyEvent.VK_S -> model.changeDirection(0, 1);
-            case KeyEvent.VK_A -> model.changeDirection(-1, 0);
-            case KeyEvent.VK_D -> model.changeDirection(1, 0);
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_W -> model.changePlayerOneDirection(0, -1);
+            case KeyEvent.VK_S -> model.changePlayerOneDirection(0, 1);
+            case KeyEvent.VK_A -> model.changePlayerOneDirection(-1, 0);
+            case KeyEvent.VK_D -> model.changePlayerOneDirection(1, 0);
+
+            case KeyEvent.VK_UP -> model.changePlayerTwoDirection(0, -1);
+            case KeyEvent.VK_DOWN -> model.changePlayerTwoDirection(0, 1);
+            case KeyEvent.VK_LEFT -> model.changePlayerTwoDirection(-1, 0);
+            case KeyEvent.VK_RIGHT -> model.changePlayerTwoDirection(1, 0);
 
             default -> directionChanged = false;
         }

@@ -1,8 +1,8 @@
 package view;
 
-import controller.GameController;
-import model.SnakeGameModel;
+import controller.TwoPlayerGameController;
 import model.Tile;
+import model.TwoPlayerSnakeGameModel;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -12,13 +12,13 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
-public class GamePanel extends JPanel {
+public class TwoPlayerGamePanel extends JPanel {
 
-    private final SnakeGameModel model;
+    private final TwoPlayerSnakeGameModel model;
     private final JButton restartButton;
     private final JButton menuButton;
 
-    public GamePanel(SnakeGameModel model) {
+    public TwoPlayerGamePanel(TwoPlayerSnakeGameModel model) {
         this.model = model;
 
         setPreferredSize(new Dimension(model.getBoardWidth(), model.getBoardHeight()));
@@ -39,7 +39,7 @@ public class GamePanel extends JPanel {
         add(menuButton);
     }
 
-    public void setController(GameController controller) {
+    public void setController(TwoPlayerGameController controller) {
         restartButton.addActionListener(e -> controller.resetGame());
     }
 
@@ -56,16 +56,25 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawGrid(g);
-        if (!model.isGameOver()) {
-            drawFood(g);
+        if (model.shouldShowPlayerOneFood()) {
+            drawFood(g, model.getPlayerOneFood(), new Color(144, 238, 144));
         }
-        drawSnake(g);
-        drawScore(g);
+        if (model.shouldShowPlayerTwoFood()) {
+            drawFood(g, model.getPlayerTwoFood(), new Color(135, 206, 250));
+        }
+        if (model.isPlayerOneAlive() || model.isGameOver()) {
+            drawSnake(g, model.getPlayerOneHead(), model.getPlayerOneBody(), new Color(57, 255, 20));
+        }
+        if (model.isPlayerTwoAlive() || model.isGameOver()) {
+            drawSnake(g, model.getPlayerTwoHead(), model.getPlayerTwoBody(), new Color(0, 191, 255));
+        }
+        drawHud(g);
     }
 
     private void drawGrid(Graphics g) {
         int columns = model.getBoardWidth() / model.getTileSize();
         int rows = model.getBoardHeight() / model.getTileSize();
+        g.setColor(new Color(45, 45, 45));
 
         for (int column = 0; column <= columns; column++) {
             int x = column * model.getTileSize();
@@ -78,9 +87,8 @@ public class GamePanel extends JPanel {
         }
     }
 
-    private void drawFood(Graphics g) {
-        Tile food = model.getFood();
-        g.setColor(Color.RED);
+    private void drawFood(Graphics g, Tile food, Color color) {
+        g.setColor(color);
         g.fillRect(
                 food.getX() * model.getTileSize(),
                 food.getY() * model.getTileSize(),
@@ -89,27 +97,26 @@ public class GamePanel extends JPanel {
         );
     }
 
-    private void drawSnake(Graphics g) {
-        Tile snakeHead = model.getSnakeHead();
-        g.setColor(Color.GREEN);
+    private void drawSnake(Graphics g, Tile head, java.util.List<Tile> body, Color color) {
+        g.setColor(color);
         g.fillRect(
-                snakeHead.getX() * model.getTileSize(),
-                snakeHead.getY() * model.getTileSize(),
+                head.getX() * model.getTileSize(),
+                head.getY() * model.getTileSize(),
                 model.getTileSize(),
                 model.getTileSize()
         );
 
-        for (Tile snakePart : model.getSnakeBody()) {
+        for (Tile segment : body) {
             g.fillRect(
-                    snakePart.getX() * model.getTileSize(),
-                    snakePart.getY() * model.getTileSize(),
+                    segment.getX() * model.getTileSize(),
+                    segment.getY() * model.getTileSize(),
                     model.getTileSize(),
                     model.getTileSize()
             );
         }
     }
 
-    private void drawScore(Graphics g) {
+    private void drawHud(Graphics g) {
         if (model.isGameOver()) {
             drawGameOver(g);
             return;
@@ -117,7 +124,11 @@ public class GamePanel extends JPanel {
 
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 16));
-        g.drawString("Score: " + model.getScore(), 10, 20);
+        g.drawString("P1 Score: " + model.getPlayerOneScore(), 10, 20);
+
+        String playerTwoScore = "P2 Score: " + model.getPlayerTwoScore();
+        int playerTwoWidth = g.getFontMetrics().stringWidth(playerTwoScore);
+        g.drawString(playerTwoScore, model.getBoardWidth() - playerTwoWidth - 10, 20);
     }
 
     private void drawGameOver(Graphics g) {
@@ -125,14 +136,25 @@ public class GamePanel extends JPanel {
         g.setFont(new Font("Arial", Font.BOLD, 40));
 
         String text = "GAME OVER";
-        FontMetrics metrics = g.getFontMetrics();
-        int x = (model.getBoardWidth() - metrics.stringWidth(text)) / 2;
-        int y = model.getBoardHeight() / 2;
-        g.drawString(text, x, y);
+        FontMetrics titleMetrics = g.getFontMetrics();
+        int titleX = (model.getBoardWidth() - titleMetrics.stringWidth(text)) / 2;
+        int titleY = model.getBoardHeight() / 2;
+        g.drawString(text, titleX, titleY);
 
         g.setFont(new Font("Arial", Font.PLAIN, 20));
-        String scoreText = "Score: " + model.getScore();
-        int scoreX = (model.getBoardWidth() - g.getFontMetrics().stringWidth(scoreText)) / 2;
-        g.drawString(scoreText, scoreX, y + 30);
+        String playerOneScore = "P1: " + model.getPlayerOneScore();
+        String playerTwoScore = "P2: " + model.getPlayerTwoScore();
+        int scoreY = titleY + 30;
+        int centerX = model.getBoardWidth() / 2;
+        int gap = 30;
+        FontMetrics scoreMetrics = g.getFontMetrics();
+        int playerOneX = centerX - gap - scoreMetrics.stringWidth(playerOneScore);
+        int playerTwoX = centerX + gap;
+        g.drawString(playerOneScore, playerOneX, scoreY);
+        g.drawString(playerTwoScore, playerTwoX, scoreY);
+
+        String winnerText = model.getWinnerText();
+        int winnerX = (model.getBoardWidth() - scoreMetrics.stringWidth(winnerText)) / 2;
+        g.drawString(winnerText, winnerX, scoreY + 30);
     }
 }
