@@ -21,7 +21,7 @@ public class MenuPanel extends JPanel {
     private int selectedPlayers = 1; // 1 hoặc 2
 
     public MenuPanel() {
-        backgroundImage = new ImageIcon("src/Snake_OG-logo.jpg").getImage();
+        backgroundImage = new ImageIcon("src/assets/Snake_OG-logo.jpg").getImage();
 
         setLayout(null);
 
