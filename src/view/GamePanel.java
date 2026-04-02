@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class GamePanel extends JPanel {
 
@@ -56,6 +57,7 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawGrid(g);
+        drawWalls(g);
         if (!model.isGameOver()) {
             drawFood(g);
         }
@@ -79,34 +81,34 @@ public class GamePanel extends JPanel {
     }
 
     private void drawFood(Graphics g) {
-        Tile food = model.getFood();
-        g.setColor(Color.RED);
-        g.fillRect(
-                food.getX() * model.getTileSize(),
-                food.getY() * model.getTileSize(),
-                model.getTileSize(),
-                model.getTileSize()
-        );
+        Graphics2D graphics = (Graphics2D) g.create();
+        ClassicSnakeRenderer.drawFood(graphics, model.getFood(), model.getTileSize());
+        graphics.dispose();
     }
 
-    private void drawSnake(Graphics g) {
-        Tile snakeHead = model.getSnakeHead();
-        g.setColor(Color.GREEN);
-        g.fillRect(
-                snakeHead.getX() * model.getTileSize(),
-                snakeHead.getY() * model.getTileSize(),
-                model.getTileSize(),
-                model.getTileSize()
-        );
-
-        for (Tile snakePart : model.getSnakeBody()) {
+    private void drawWalls(Graphics g) {
+        g.setColor(new Color(120, 120, 120));
+        for (Tile wallTile : model.getMap().getWallTiles()) {
             g.fillRect(
-                    snakePart.getX() * model.getTileSize(),
-                    snakePart.getY() * model.getTileSize(),
+                    wallTile.getX() * model.getTileSize(),
+                    wallTile.getY() * model.getTileSize(),
                     model.getTileSize(),
                     model.getTileSize()
             );
         }
+    }
+
+    private void drawSnake(Graphics g) {
+        Graphics2D graphics = (Graphics2D) g.create();
+        ClassicSnakeRenderer.drawSnake(
+                graphics,
+                model.getSnakeHead(),
+                model.getSnakeBody(),
+                model.getTileSize(),
+                model.getVelocityX(),
+                model.getVelocityY()
+        );
+        graphics.dispose();
     }
 
     private void drawScore(Graphics g) {

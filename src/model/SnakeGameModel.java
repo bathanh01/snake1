@@ -14,6 +14,7 @@ public class SnakeGameModel {
     private final int boardHeight;
     private final int tileSize;
     private final Random random;
+    private SinglePlayerMap map;
 
     private Tile snakeHead;
     private final List<Tile> snakeBody;
@@ -27,7 +28,13 @@ public class SnakeGameModel {
         this.boardHeight = boardHeight;
         this.tileSize = tileSize;
         this.random = new Random();
+        this.map = new DefaultSinglePlayerMap(boardWidth, boardHeight, tileSize);
         this.snakeBody = new ArrayList<>();
+        resetGame();
+    }
+
+    public void setMap(SinglePlayerMap map) {
+        this.map = map;
         resetGame();
     }
 
@@ -63,10 +70,10 @@ public class SnakeGameModel {
             }
         }
 
-        snakeHead.setX(snakeHead.getX() + velocityX);
-        snakeHead.setY(snakeHead.getY() + velocityY);
+        snakeHead.setX(map.normalizeX(snakeHead.getX() + velocityX));
+        snakeHead.setY(map.normalizeY(snakeHead.getY() + velocityY));
 
-        if (isOutOfBounds() || hasSelfCollision()) {
+        if (map.isOutOfBounds(snakeHead) || map.hitsWall(snakeHead) || hasSelfCollision()) {
             gameOver = true;
         }
 
@@ -109,8 +116,20 @@ public class SnakeGameModel {
         return food;
     }
 
+    public SinglePlayerMap getMap() {
+        return map;
+    }
+
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    public int getVelocityX() {
+        return velocityX;
+    }
+
+    public int getVelocityY() {
+        return velocityY;
     }
 
     public int getScore() {
@@ -118,8 +137,10 @@ public class SnakeGameModel {
     }
 
     private void placeFood() {
-        food.setX(random.nextInt(boardWidth / tileSize));
-        food.setY(random.nextInt(boardHeight / tileSize));
+        do {
+            food.setX(random.nextInt(map.getColumns()));
+            food.setY(random.nextInt(map.getRows()));
+        } while (map.hitsWall(food) || occupiesSnake(food));
     }
 
     private boolean isCollision(Tile firstTile, Tile secondTile) {
@@ -135,10 +156,16 @@ public class SnakeGameModel {
         return false;
     }
 
-    private boolean isOutOfBounds() {
-        return snakeHead.getX() < 0
-                || snakeHead.getY() < 0
-                || snakeHead.getX() >= boardWidth / tileSize
-                || snakeHead.getY() >= boardHeight / tileSize;
+    private boolean occupiesSnake(Tile tile) {
+        if (isCollision(tile, snakeHead)) {
+            return true;
+        }
+
+        for (Tile snakePart : snakeBody) {
+            if (isCollision(tile, snakePart)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
