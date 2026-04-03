@@ -2,6 +2,8 @@ package app;
 
 import controller.GameController;
 import controller.TwoPlayerGameController;
+import model.DefaultSinglePlayerMap;
+import model.HorizontalWallWrapMap;
 import model.SnakeGameModel;
 import model.TwoPlayerSnakeGameModel;
 import view.GamePanel;
@@ -52,6 +54,11 @@ public class App {
                 cardLayout.show(mainPanel, "twoPlayerGame");
                 twoPlayerGamePanel.requestFocusInWindow();
             } else {
+                if (menuPanel.getSelectedMapType() == SinglePlayerMapType.HORIZONTAL_WRAP) {
+                    gameModel.setMap(new HorizontalWallWrapMap(boardWidth, boardHeight, 25));
+                } else {
+                    gameModel.setMap(new DefaultSinglePlayerMap(boardWidth, boardHeight, 25));
+                }
                 gameController.startGame();
                 cardLayout.show(mainPanel, "game");
                 gamePanel.requestFocusInWindow();
