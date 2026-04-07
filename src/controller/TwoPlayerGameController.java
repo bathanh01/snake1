@@ -1,7 +1,7 @@
 package controller;
 
-import model.SnakeGameModel;
-import view.GamePanel;
+import model.TwoPlayerSnakeGameModel;
+import view.TwoPlayerGamePanel;
 
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
@@ -9,16 +9,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class GameController implements ActionListener, KeyListener {
+public class TwoPlayerGameController implements ActionListener, KeyListener {
 
-    private final SnakeGameModel model;
-    private final GamePanel gamePanel;
+    private final TwoPlayerSnakeGameModel model;
+    private final TwoPlayerGamePanel gamePanel;
     private final Timer gameLoop;
 
-    public GameController(SnakeGameModel model, GamePanel gamePanel) {
+    public TwoPlayerGameController(TwoPlayerSnakeGameModel model, TwoPlayerGamePanel gamePanel) {
         this.model = model;
         this.gamePanel = gamePanel;
-        this.gameLoop = new Timer(model.getBaseDelay(), this);
+        this.gameLoop = new Timer(100, this);
         this.gamePanel.setController(this);
         this.gamePanel.addKeyListener(this);
     }
@@ -29,7 +29,6 @@ public class GameController implements ActionListener, KeyListener {
         }
         gamePanel.showGameOverButtons(false);
         gamePanel.repaint();
-        gameLoop.setDelay(model.getBaseDelay());
         gameLoop.stop();
         gamePanel.requestFocusInWindow();
     }
@@ -37,7 +36,7 @@ public class GameController implements ActionListener, KeyListener {
     public void resetGame() {
         model.resetGame();
         gamePanel.showGameOverButtons(false);
-        gameLoop.setDelay(model.getBaseDelay());
+        gameLoop.setDelay(100);
         gameLoop.stop();
         gamePanel.repaint();
         gamePanel.requestFocusInWindow();
@@ -69,20 +68,36 @@ public class GameController implements ActionListener, KeyListener {
     }
 
     private boolean handleKeyPress(int keyCode) {
-        if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
-            model.changeDirection(0, -1);
+        if (keyCode == KeyEvent.VK_W) {
+            model.changePlayerOneDirection(0, -1);
             return true;
         }
-        if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
-            model.changeDirection(0, 1);
+        if (keyCode == KeyEvent.VK_S) {
+            model.changePlayerOneDirection(0, 1);
             return true;
         }
-        if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
-            model.changeDirection(-1, 0);
+        if (keyCode == KeyEvent.VK_A) {
+            model.changePlayerOneDirection(-1, 0);
             return true;
         }
-        if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
-            model.changeDirection(1, 0);
+        if (keyCode == KeyEvent.VK_D) {
+            model.changePlayerOneDirection(1, 0);
+            return true;
+        }
+        if (keyCode == KeyEvent.VK_UP) {
+            model.changePlayerTwoDirection(0, -1);
+            return true;
+        }
+        if (keyCode == KeyEvent.VK_DOWN) {
+            model.changePlayerTwoDirection(0, 1);
+            return true;
+        }
+        if (keyCode == KeyEvent.VK_LEFT) {
+            model.changePlayerTwoDirection(-1, 0);
+            return true;
+        }
+        if (keyCode == KeyEvent.VK_RIGHT) {
+            model.changePlayerTwoDirection(1, 0);
             return true;
         }
 
