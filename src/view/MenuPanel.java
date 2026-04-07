@@ -110,12 +110,14 @@ public class MenuPanel extends JPanel {
         onePlayerButton.addActionListener(e -> {
             selectedPlayers = 1;
             updatePlayerButtonColors();
+            updateMapAvailability();
             hidePlayerButtons();
         });
 
         twoPlayerButton.addActionListener(e -> {
             selectedPlayers = 2;
             updatePlayerButtonColors();
+            updateMapAvailability();
             hidePlayerButtons();
         });
 
@@ -175,6 +177,17 @@ public class MenuPanel extends JPanel {
         }
     }
 
+    private void updateMapAvailability() {
+        boolean singlePlayerSelected = selectedPlayers == 1;
+        mapButton.setEnabled(singlePlayerSelected);
+
+        if (!singlePlayerSelected) {
+            hideMapButtons();
+        }
+
+        updateBackgroundImage();
+    }
+
     private void updateMapButtonColors() {
         defaultMapButton.setBackground(Color.LIGHT_GRAY);
         wrapMapButton.setBackground(Color.LIGHT_GRAY);
@@ -190,7 +203,7 @@ public class MenuPanel extends JPanel {
     }
 
     private void updateBackgroundImage() {
-        if (selectedMapType == SinglePlayerMapType.DESERT && desertBackgroundImage != null) {
+        if (selectedPlayers == 1 && selectedMapType == SinglePlayerMapType.DESERT && desertBackgroundImage != null) {
             backgroundImage = desertBackgroundImage;
         } else {
             backgroundImage = defaultBackgroundImage;

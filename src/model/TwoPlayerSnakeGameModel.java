@@ -70,28 +70,55 @@ public class TwoPlayerSnakeGameModel {
             return getCurrentDelay();
         }
 
-        Tile playerOneTail = moveSnake(playerOneHead, playerOneBody, playerOneVelocityX, playerOneVelocityY, playerOneAlive);
-        Tile playerTwoTail = moveSnake(playerTwoHead, playerTwoBody, playerTwoVelocityX, playerTwoVelocityY, playerTwoAlive);
+        boolean playerOneMoves = playerOneAlive && isMoving(playerOneVelocityX, playerOneVelocityY);
+        boolean playerTwoMoves = playerTwoAlive && isMoving(playerTwoVelocityX, playerTwoVelocityY);
 
-        if (playerOneAlive && isCollision(playerOneHead, playerOneFood)) {
-            playerOneBody.add(playerOneTail);
+        Tile nextPlayerOneHead = createNextHead(playerOneHead, playerOneVelocityX, playerOneVelocityY, playerOneMoves);
+        Tile nextPlayerTwoHead = createNextHead(playerTwoHead, playerTwoVelocityX, playerTwoVelocityY, playerTwoMoves);
+
+        boolean playerOneAteFood = playerOneMoves && isCollision(nextPlayerOneHead, playerOneFood);
+        boolean playerTwoAteFood = playerTwoMoves && isCollision(nextPlayerTwoHead, playerTwoFood);
+
+        List<Tile> nextPlayerOneBody = createNextBody(playerOneHead, playerOneBody, playerOneMoves, playerOneAteFood);
+        List<Tile> nextPlayerTwoBody = createNextBody(playerTwoHead, playerTwoBody, playerTwoMoves, playerTwoAteFood);
+
+        boolean playerOneLost = playerOneAlive && hasLost(nextPlayerOneHead, nextPlayerOneBody, nextPlayerTwoBody);
+        boolean playerTwoLost = playerTwoAlive && hasLost(nextPlayerTwoHead, nextPlayerTwoBody, nextPlayerOneBody);
+
+        if (isCollision(nextPlayerOneHead, nextPlayerTwoHead)) {
+            if (playerOneMoves && playerTwoMoves) {
+                playerOneLost = true;
+                playerTwoLost = true;
+            } else if (playerOneMoves) {
+                playerOneLost = true;
+            } else if (playerTwoMoves) {
+                playerTwoLost = true;
+            }
+        }
+
+        if (playerOneMoves
+                && playerTwoMoves
+                && isCollision(nextPlayerOneHead, playerTwoHead)
+                && isCollision(nextPlayerTwoHead, playerOneHead)) {
+            playerOneLost = true;
+            playerTwoLost = true;
+        }
+
+        applyNextState(playerOneHead, playerOneBody, nextPlayerOneHead, nextPlayerOneBody);
+        applyNextState(playerTwoHead, playerTwoBody, nextPlayerTwoHead, nextPlayerTwoBody);
+
+        playerOneAlive = playerOneAlive && !playerOneLost;
+        playerTwoAlive = playerTwoAlive && !playerTwoLost;
+
+        if (playerOneAteFood) {
             placeFood(playerOneFood, playerTwoFood);
         }
 
-        if (playerTwoAlive && isCollision(playerTwoHead, playerTwoFood)) {
-            playerTwoBody.add(playerTwoTail);
+        if (playerTwoAteFood) {
             placeFood(playerTwoFood, playerOneFood);
         }
 
-        if (playerOneAlive && hasLost(playerOneHead, playerOneBody)) {
-            playerOneAlive = false;
-        }
-
-        if (playerTwoAlive && hasLost(playerTwoHead, playerTwoBody)) {
-            playerTwoAlive = false;
-        }
-
-        if (!playerOneAlive && !playerTwoAlive) {
+        if (!playerOneAlive || !playerTwoAlive) {
             gameOver = true;
             winnerText = determineWinnerText();
         }
@@ -186,45 +213,39 @@ public class TwoPlayerSnakeGameModel {
         return Math.max(MIN_DELAY, BASE_DELAY - longestSnake * 2);
     }
 
-    private Tile moveSnake(Tile head, List<Tile> body, int velocityX, int velocityY, boolean alive) {
-        Tile tailPosition = getTailPosition(head, body);
-
-        if (!alive) {
-            return tailPosition;
+    private Tile createNextHead(Tile currentHead, int velocityX, int velocityY, boolean moves) {
+        if (!moves) {
+            return new Tile(currentHead);
         }
 
-        if (velocityX == 0 && velocityY == 0) {
-            return tailPosition;
-        }
-
-        int previousX = head.getX();
-        int previousY = head.getY();
-
-        for (int i = 0; i < body.size(); i++) {
-            Tile segment = body.get(i);
-            int currentX = segment.getX();
-            int currentY = segment.getY();
-
-            segment.setPosition(previousX, previousY);
-
-            previousX = currentX;
-            previousY = currentY;
-        }
-
-        head.setPosition(head.getX() + velocityX, head.getY() + velocityY);
-        return tailPosition;
+        return new Tile(currentHead.getX() + velocityX, currentHead.getY() + velocityY);
     }
 
-    private Tile getTailPosition(Tile head, List<Tile> body) {
-        if (body.isEmpty()) {
-            return new Tile(head);
+    private List<Tile> createNextBody(Tile head, List<Tile> body, boolean moves, boolean grows) {
+        if (!moves) {
+            return copyTiles(body);
         }
 
-        return new Tile(body.get(body.size() - 1));
+        List<Tile> previousPositions = new ArrayList<>();
+        previousPositions.add(new Tile(head));
+        previousPositions.addAll(copyTiles(body));
+
+        int segmentCount = body.size() + (grows ? 1 : 0);
+        List<Tile> nextBody = new ArrayList<>(segmentCount);
+        for (int index = 0; index < segmentCount; index++) {
+            nextBody.add(previousPositions.get(index));
+        }
+        return nextBody;
     }
 
-    private boolean hasLost(Tile head, List<Tile> body) {
-        return isOutOfBounds(head) || hitsBody(head, body);
+    private void applyNextState(Tile head, List<Tile> body, Tile nextHead, List<Tile> nextBody) {
+        head.setPosition(nextHead);
+        body.clear();
+        body.addAll(nextBody);
+    }
+
+    private boolean hasLost(Tile head, List<Tile> ownBody, List<Tile> otherBody) {
+        return isOutOfBounds(head) || hitsBody(head, ownBody) || hitsBody(head, otherBody);
     }
 
     private boolean hitsBody(Tile head, List<Tile> body) {
@@ -273,6 +294,18 @@ public class TwoPlayerSnakeGameModel {
         return otherFood != null && isCollision(targetFood, otherFood);
     }
 
+    private boolean isMoving(int velocityX, int velocityY) {
+        return velocityX != 0 || velocityY != 0;
+    }
+
+    private List<Tile> copyTiles(List<Tile> tiles) {
+        List<Tile> copies = new ArrayList<>(tiles.size());
+        for (Tile tile : tiles) {
+            copies.add(new Tile(tile));
+        }
+        return copies;
+    }
+
     private boolean isReverseDirection(int currentVelocityX, int currentVelocityY, int nextVelocityX, int nextVelocityY) {
         if (nextVelocityX != 0 && currentVelocityX == -nextVelocityX) {
             return true;
@@ -288,6 +321,14 @@ public class TwoPlayerSnakeGameModel {
     }
 
     private String determineWinnerText() {
+        if (playerOneAlive && !playerTwoAlive) {
+            return "Player 1 wins";
+        }
+
+        if (playerTwoAlive && !playerOneAlive) {
+            return "Player 2 wins";
+        }
+
         if (getPlayerOneScore() == getPlayerTwoScore()) {
             return "Draw";
         }
