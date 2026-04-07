@@ -18,7 +18,10 @@ import java.net.URL;
 
 public class MenuPanel extends JPanel {
 
-    private final Image backgroundImage;
+    private final Image defaultBackgroundImage;
+    private final Image desertBackgroundImage;
+    private Image backgroundImage;
+
     private final JButton playButton;
     private final JButton modeButton;
     private final JButton onePlayerButton;
@@ -32,7 +35,15 @@ public class MenuPanel extends JPanel {
     private SinglePlayerMapType selectedMapType = SinglePlayerMapType.DEFAULT;
 
     public MenuPanel() {
-        backgroundImage = loadBackgroundImage();
+        defaultBackgroundImage = loadImage(
+                new String[]{"/assets/Snake_OG-logo.jpg", "/Snake_OG-logo.jpg"},
+                new String[]{"src/assets/Snake_OG-logo.jpg", "src/Snake_OG-logo.jpg"}
+        );
+        desertBackgroundImage = loadImage(
+                new String[]{"/assets/desert-level-sand-real.png", "/desert-level-sand-real.png"},
+                new String[]{"src/assets/desert-level-sand-real.png", "src/desert-level-sand-real.png"}
+        );
+        backgroundImage = defaultBackgroundImage;
 
         setLayout(null);
 
@@ -60,6 +71,7 @@ public class MenuPanel extends JPanel {
 
         updatePlayerButtonColors();
         updateMapButtonColors();
+        updateBackgroundImage();
         registerActions();
     }
 
@@ -80,51 +92,6 @@ public class MenuPanel extends JPanel {
         super.paintComponent(g);
         if (backgroundImage != null) {
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-        }
-    }
-
-    private Image loadBackgroundImage() {
-        String[] resourcePaths = {
-                "/assets/menu-background.png",
-                "/assets/Snake_OG-logo.jpg",
-                "/menu-background.png",
-                "/Snake_OG-logo.jpg"
-        };
-
-        for (String resourcePath : resourcePaths) {
-            URL resource = getClass().getResource(resourcePath);
-            if (resource != null) {
-                return new ImageIcon(resource).getImage();
-            }
-        }
-
-        String[] filePaths = {
-                "src/assets/menu-background.png",
-                "src/assets/Snake_OG-logo.jpg",
-                "src/menu-background.png",
-                "src/Snake_OG-logo.jpg"
-        };
-
-        for (String filePath : filePaths) {
-            Image image = loadImageFromFile(filePath);
-            if (image != null) {
-                return image;
-            }
-        }
-
-        return null;
-    }
-
-    private Image loadImageFromFile(String filePath) {
-        File imageFile = new File(filePath);
-        if (!imageFile.exists()) {
-            return null;
-        }
-
-        try {
-            return ImageIO.read(imageFile);
-        } catch (IOException ignored) {
-            return null;
         }
     }
 
@@ -155,18 +122,21 @@ public class MenuPanel extends JPanel {
         defaultMapButton.addActionListener(e -> {
             selectedMapType = SinglePlayerMapType.DEFAULT;
             updateMapButtonColors();
+            updateBackgroundImage();
             hideMapButtons();
         });
 
         wrapMapButton.addActionListener(e -> {
             selectedMapType = SinglePlayerMapType.HORIZONTAL_WRAP;
             updateMapButtonColors();
+            updateBackgroundImage();
             hideMapButtons();
         });
 
         desertMapButton.addActionListener(e -> {
             selectedMapType = SinglePlayerMapType.DESERT;
             updateMapButtonColors();
+            updateBackgroundImage();
             hideMapButtons();
         });
     }
@@ -216,6 +186,46 @@ public class MenuPanel extends JPanel {
             wrapMapButton.setBackground(Color.GREEN);
         } else {
             desertMapButton.setBackground(new Color(205, 133, 63));
+        }
+    }
+
+    private void updateBackgroundImage() {
+        if (selectedMapType == SinglePlayerMapType.DESERT && desertBackgroundImage != null) {
+            backgroundImage = desertBackgroundImage;
+        } else {
+            backgroundImage = defaultBackgroundImage;
+        }
+        repaint();
+    }
+
+    private Image loadImage(String[] resourcePaths, String[] filePaths) {
+        for (String resourcePath : resourcePaths) {
+            URL resource = getClass().getResource(resourcePath);
+            if (resource != null) {
+                return new ImageIcon(resource).getImage();
+            }
+        }
+
+        for (String filePath : filePaths) {
+            Image image = loadImageFromFile(filePath);
+            if (image != null) {
+                return image;
+            }
+        }
+
+        return null;
+    }
+
+    private Image loadImageFromFile(String filePath) {
+        File imageFile = new File(filePath);
+        if (!imageFile.exists()) {
+            return null;
+        }
+
+        try {
+            return ImageIO.read(imageFile);
+        } catch (IOException ignored) {
+            return null;
         }
     }
 }

@@ -5,8 +5,10 @@ import model.DesertSinglePlayerMap;
 import model.SnakeGameModel;
 import model.Tile;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -15,7 +17,11 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class GamePanel extends JPanel {
 
@@ -35,13 +41,17 @@ public class GamePanel extends JPanel {
     private static final Color DESERT_GRID = new Color(120, 88, 24, 24);
     private static final Color DESERT_HUD = new Color(86, 54, 30, 185);
     private static final Color DESERT_HUD_BORDER = new Color(242, 208, 154, 120);
+    private static final Color DESERT_IMAGE_TINT_LIGHT = new Color(250, 221, 116, 78);
+    private static final Color DESERT_IMAGE_TINT_DARK = new Color(235, 197, 74, 52);
 
     private final SnakeGameModel model;
     private final JButton restartButton;
     private final JButton menuButton;
+    private final Image desertBackgroundImage;
 
     public GamePanel(SnakeGameModel model) {
         this.model = model;
+        this.desertBackgroundImage = loadDesertBackgroundImage();
 
         setPreferredSize(new Dimension(model.getBoardWidth(), model.getBoardHeight()));
         setBackground(CLASSIC_BACKGROUND);
@@ -104,6 +114,12 @@ public class GamePanel extends JPanel {
     }
 
     private void drawDesertBoard(Graphics2D graphics) {
+        if (desertBackgroundImage != null) {
+            graphics.drawImage(desertBackgroundImage, 0, 0, getWidth(), getHeight(), this);
+            drawCheckerboard(graphics, DESERT_IMAGE_TINT_LIGHT, DESERT_IMAGE_TINT_DARK, DESERT_GRID);
+            return;
+        }
+
         graphics.setColor(DESERT_BACKGROUND);
         graphics.fillRect(0, 0, getWidth(), getHeight());
         drawCheckerboard(graphics, DESERT_CELL_LIGHT, DESERT_CELL_DARK, DESERT_GRID);
@@ -255,5 +271,46 @@ public class GamePanel extends JPanel {
         button.setBackground(background);
         button.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
         button.setFocusPainted(false);
+    }
+
+    private Image loadDesertBackgroundImage() {
+        String[] resourcePaths = {
+                "/assets/desert-level-sand-real.png",
+                "/desert-level-sand-real.png"
+        };
+
+        for (String resourcePath : resourcePaths) {
+            URL resource = getClass().getResource(resourcePath);
+            if (resource != null) {
+                return new ImageIcon(resource).getImage();
+            }
+        }
+
+        String[] filePaths = {
+                "src/assets/desert-level-sand-real.png",
+                "src/desert-level-sand-real.png"
+        };
+
+        for (String filePath : filePaths) {
+            Image image = loadImageFromFile(filePath);
+            if (image != null) {
+                return image;
+            }
+        }
+
+        return null;
+    }
+
+    private Image loadImageFromFile(String filePath) {
+        File imageFile = new File(filePath);
+        if (!imageFile.exists()) {
+            return null;
+        }
+
+        try {
+            return ImageIO.read(imageFile);
+        } catch (IOException ignored) {
+            return null;
+        }
     }
 }
