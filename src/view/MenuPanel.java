@@ -84,21 +84,48 @@ public class MenuPanel extends JPanel {
     }
 
     private Image loadBackgroundImage() {
-        URL resource = getClass().getResource("/assets/Snake_OG-logo.jpg");
-        if (resource != null) {
-            return new ImageIcon(resource).getImage();
+        String[] resourcePaths = {
+                "/assets/menu-background.png",
+                "/assets/Snake_OG-logo.jpg",
+                "/menu-background.png",
+                "/Snake_OG-logo.jpg"
+        };
+
+        for (String resourcePath : resourcePaths) {
+            URL resource = getClass().getResource(resourcePath);
+            if (resource != null) {
+                return new ImageIcon(resource).getImage();
+            }
         }
 
-        File imageFile = new File("src/assets/Snake_OG-logo.jpg");
-        if (imageFile.exists()) {
-            try {
-                return ImageIO.read(imageFile);
-            } catch (IOException ignored) {
-                return null;
+        String[] filePaths = {
+                "src/assets/menu-background.png",
+                "src/assets/Snake_OG-logo.jpg",
+                "src/menu-background.png",
+                "src/Snake_OG-logo.jpg"
+        };
+
+        for (String filePath : filePaths) {
+            Image image = loadImageFromFile(filePath);
+            if (image != null) {
+                return image;
             }
         }
 
         return null;
+    }
+
+    private Image loadImageFromFile(String filePath) {
+        File imageFile = new File(filePath);
+        if (!imageFile.exists()) {
+            return null;
+        }
+
+        try {
+            return ImageIO.read(imageFile);
+        } catch (IOException ignored) {
+            return null;
+        }
     }
 
     private JButton createButton(String text, int x, int y, int width, int height, int fontSize, int fontStyle) {
