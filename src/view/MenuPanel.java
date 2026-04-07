@@ -2,6 +2,7 @@ package view;
 
 import app.SinglePlayerMapType;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -11,6 +12,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class MenuPanel extends JPanel {
 
@@ -28,7 +32,7 @@ public class MenuPanel extends JPanel {
     private SinglePlayerMapType selectedMapType = SinglePlayerMapType.DEFAULT;
 
     public MenuPanel() {
-        backgroundImage = new ImageIcon("src/assets/Snake_OG-logo.jpg").getImage();
+        backgroundImage = loadBackgroundImage();
 
         setLayout(null);
 
@@ -74,7 +78,27 @@ public class MenuPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+
+    private Image loadBackgroundImage() {
+        URL resource = getClass().getResource("/assets/Snake_OG-logo.jpg");
+        if (resource != null) {
+            return new ImageIcon(resource).getImage();
+        }
+
+        File imageFile = new File("src/assets/Snake_OG-logo.jpg");
+        if (imageFile.exists()) {
+            try {
+                return ImageIO.read(imageFile);
+            } catch (IOException ignored) {
+                return null;
+            }
+        }
+
+        return null;
     }
 
     private JButton createButton(String text, int x, int y, int width, int height, int fontSize, int fontStyle) {
