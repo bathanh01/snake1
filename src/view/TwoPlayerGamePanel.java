@@ -8,6 +8,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BasicStroke;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -31,12 +33,14 @@ public class TwoPlayerGamePanel extends JPanel {
 
         restartButton = new JButton("Play Again");
         styleActionButton(restartButton, new Color(48, 138, 92));
+        restartButton.setFocusable(false);
         restartButton.setBounds(model.getBoardWidth() / 2 - 75, model.getBoardHeight() / 2 + 80, 150, 40);
         restartButton.setVisible(false);
         add(restartButton);
 
         menuButton = new JButton("Back to Menu");
         styleActionButton(menuButton, new Color(128, 92, 54));
+        menuButton.setFocusable(false);
         menuButton.setBounds(model.getBoardWidth() / 2 - 75, model.getBoardHeight() / 2 + 130, 150, 40);
         menuButton.setVisible(false);
         add(menuButton);
@@ -99,6 +103,31 @@ public class TwoPlayerGamePanel extends JPanel {
 
         for (Tile segment : body) {
             drawTile(g, segment, color);
+        g.setColor(color);
+        g.fillRect(
+                food.getX() * model.getTileSize(),
+                food.getY() * model.getTileSize(),
+                model.getTileSize(),
+                model.getTileSize()
+        );
+    }
+
+    private void drawSnake(Graphics g, Tile head, java.util.List<Tile> body, Color color) {
+        g.setColor(color);
+        g.fillRect(
+                head.getX() * model.getTileSize(),
+                head.getY() * model.getTileSize(),
+                model.getTileSize(),
+                model.getTileSize()
+        );
+
+        for (Tile segment : body) {
+            g.fillRect(
+                    segment.getX() * model.getTileSize(),
+                    segment.getY() * model.getTileSize(),
+                    model.getTileSize(),
+                    model.getTileSize()
+            );
         }
     }
 
@@ -138,6 +167,16 @@ public class TwoPlayerGamePanel extends JPanel {
         graphics.drawString(text, titleX, titleY);
 
         graphics.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setColor(Color.RED);
+        g.setFont(new Font("Arial", Font.BOLD, 40));
+
+        String text = "GAME OVER";
+        FontMetrics titleMetrics = g.getFontMetrics();
+        int titleX = (model.getBoardWidth() - titleMetrics.stringWidth(text)) / 2;
+        int titleY = model.getBoardHeight() / 2;
+        g.drawString(text, titleX, titleY);
+
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
         String playerOneScore = "P1: " + model.getPlayerOneScore();
         String playerTwoScore = "P2: " + model.getPlayerTwoScore();
         int scoreY = titleY + 30;
@@ -170,5 +209,14 @@ public class TwoPlayerGamePanel extends JPanel {
         button.setBackground(background);
         button.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
         button.setFocusPainted(false);
+        FontMetrics scoreMetrics = g.getFontMetrics();
+        int playerOneX = centerX - gap - scoreMetrics.stringWidth(playerOneScore);
+        int playerTwoX = centerX + gap;
+        g.drawString(playerOneScore, playerOneX, scoreY);
+        g.drawString(playerTwoScore, playerTwoX, scoreY);
+
+        String winnerText = model.getWinnerText();
+        int winnerX = (model.getBoardWidth() - scoreMetrics.stringWidth(winnerText)) / 2;
+        g.drawString(winnerText, winnerX, scoreY + 30);
     }
 }

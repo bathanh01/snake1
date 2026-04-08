@@ -41,4 +41,13 @@ public interface SinglePlayerMap {
     default boolean blocksSpawn(Tile tile) {
         return isOutOfBounds(tile) || hitsWall(tile);
     }
+    int normalizeX(int x);
+
+    int normalizeY(int y);
+
+    boolean isOutOfBounds(Tile tile);
+
+    boolean hitsWall(Tile tile);
+
+    List<Tile> getWallTiles();
 }

@@ -24,6 +24,26 @@ public class DefaultSinglePlayerMap implements SinglePlayerMap {
     }
 
     @Override
+    public int normalizeX(int x) {
+        return x;
+    }
+
+    @Override
+    public int normalizeY(int y) {
+        return y;
+    }
+
+    @Override
+    public boolean isOutOfBounds(Tile tile) {
+        return tile.getX() < 0 || tile.getY() < 0 || tile.getX() >= columns || tile.getY() >= rows;
+    }
+
+    @Override
+    public boolean hitsWall(Tile tile) {
+        return false;
+    }
+
+    @Override
     public List<Tile> getWallTiles() {
         return Collections.emptyList();
     }

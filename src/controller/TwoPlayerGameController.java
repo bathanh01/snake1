@@ -102,6 +102,25 @@ public class TwoPlayerGameController implements ActionListener, KeyListener {
         }
 
         return false;
+        boolean directionChanged = true;
+
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_W -> model.changePlayerOneDirection(0, -1);
+            case KeyEvent.VK_S -> model.changePlayerOneDirection(0, 1);
+            case KeyEvent.VK_A -> model.changePlayerOneDirection(-1, 0);
+            case KeyEvent.VK_D -> model.changePlayerOneDirection(1, 0);
+
+            case KeyEvent.VK_UP -> model.changePlayerTwoDirection(0, -1);
+            case KeyEvent.VK_DOWN -> model.changePlayerTwoDirection(0, 1);
+            case KeyEvent.VK_LEFT -> model.changePlayerTwoDirection(-1, 0);
+            case KeyEvent.VK_RIGHT -> model.changePlayerTwoDirection(1, 0);
+
+            default -> directionChanged = false;
+        }
+
+        if (directionChanged && !gameLoop.isRunning() && !model.isGameOver()) {
+            gameLoop.start();
+        }
     }
 
     @Override

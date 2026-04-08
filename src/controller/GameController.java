@@ -38,6 +38,7 @@ public class GameController implements ActionListener, KeyListener {
         model.resetGame();
         gamePanel.showGameOverButtons(false);
         gameLoop.setDelay(model.getBaseDelay());
+        gameLoop.setDelay(100);
         gameLoop.stop();
         gamePanel.repaint();
         gamePanel.requestFocusInWindow();
@@ -62,6 +63,13 @@ public class GameController implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         boolean directionChanged = handleKeyPress(e.getKeyCode());
+        boolean directionChanged = true;
+        switch (e.getKeyCode()) {
+            // Arrow keys
+            case KeyEvent.VK_UP -> model.changeDirection(0, -1);
+            case KeyEvent.VK_DOWN -> model.changeDirection(0, 1);
+            case KeyEvent.VK_LEFT -> model.changeDirection(-1, 0);
+            case KeyEvent.VK_RIGHT -> model.changeDirection(1, 0);
 
         if (directionChanged && !gameLoop.isRunning() && !model.isGameOver()) {
             gameLoop.start();
@@ -76,6 +84,11 @@ public class GameController implements ActionListener, KeyListener {
         if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
             model.changeDirection(0, 1);
             return true;
+            default -> directionChanged = false;
+        }
+
+        if (directionChanged && !gameLoop.isRunning() && !model.isGameOver()) {
+            gameLoop.start();
         }
         if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
             model.changeDirection(-1, 0);

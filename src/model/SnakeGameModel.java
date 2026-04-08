@@ -15,6 +15,7 @@ public class SnakeGameModel {
     private final int tileSize;
     private final Random random;
     private final List<Tile> snakeBody;
+    private SinglePlayerMap map;
 
     private SinglePlayerMap map;
     private Tile snakeHead;
@@ -28,8 +29,14 @@ public class SnakeGameModel {
         this.boardHeight = boardHeight;
         this.tileSize = tileSize;
         this.random = new Random();
+        this.map = new DefaultSinglePlayerMap(boardWidth, boardHeight, tileSize);
         this.snakeBody = new ArrayList<>();
         this.map = new DefaultSinglePlayerMap(boardWidth, boardHeight, tileSize);
+        resetGame();
+    }
+
+    public void setMap(SinglePlayerMap map) {
+        this.map = map;
         resetGame();
     }
 
@@ -73,6 +80,10 @@ public class SnakeGameModel {
         }
 
         if (hitsBody(snakeHead)) {
+        snakeHead.setX(map.normalizeX(snakeHead.getX() + velocityX));
+        snakeHead.setY(map.normalizeY(snakeHead.getY() + velocityY));
+
+        if (map.isOutOfBounds(snakeHead) || map.hitsWall(snakeHead) || hasSelfCollision()) {
             gameOver = true;
         }
 
@@ -177,6 +188,9 @@ public class SnakeGameModel {
         do {
             food.setPosition(random.nextInt(map.getColumns()), random.nextInt(map.getRows()));
         } while (map.blocksSpawn(food) || occupiesSnake(food));
+            food.setX(random.nextInt(map.getColumns()));
+            food.setY(random.nextInt(map.getRows()));
+        } while (map.hitsWall(food) || occupiesSnake(food));
     }
 
     private Tile findValidSpawnTile() {
@@ -216,5 +230,11 @@ public class SnakeGameModel {
 
     private boolean isCollision(Tile firstTile, Tile secondTile) {
         return firstTile.getX() == secondTile.getX() && firstTile.getY() == secondTile.getY();
+        for (Tile snakePart : snakeBody) {
+            if (isCollision(tile, snakePart)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
