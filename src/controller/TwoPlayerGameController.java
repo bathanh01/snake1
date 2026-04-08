@@ -60,48 +60,6 @@ public class TwoPlayerGameController implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        boolean directionChanged = handleKeyPress(e.getKeyCode());
-
-        if (directionChanged && !gameLoop.isRunning() && !model.isGameOver()) {
-            gameLoop.start();
-        }
-    }
-
-    private boolean handleKeyPress(int keyCode) {
-        if (keyCode == KeyEvent.VK_W) {
-            model.changePlayerOneDirection(0, -1);
-            return true;
-        }
-        if (keyCode == KeyEvent.VK_S) {
-            model.changePlayerOneDirection(0, 1);
-            return true;
-        }
-        if (keyCode == KeyEvent.VK_A) {
-            model.changePlayerOneDirection(-1, 0);
-            return true;
-        }
-        if (keyCode == KeyEvent.VK_D) {
-            model.changePlayerOneDirection(1, 0);
-            return true;
-        }
-        if (keyCode == KeyEvent.VK_UP) {
-            model.changePlayerTwoDirection(0, -1);
-            return true;
-        }
-        if (keyCode == KeyEvent.VK_DOWN) {
-            model.changePlayerTwoDirection(0, 1);
-            return true;
-        }
-        if (keyCode == KeyEvent.VK_LEFT) {
-            model.changePlayerTwoDirection(-1, 0);
-            return true;
-        }
-        if (keyCode == KeyEvent.VK_RIGHT) {
-            model.changePlayerTwoDirection(1, 0);
-            return true;
-        }
-
-        return false;
         boolean directionChanged = true;
 
         switch (e.getKeyCode()) {
