@@ -18,7 +18,7 @@ public class GameController implements ActionListener, KeyListener {
     public GameController(SnakeGameModel model, GamePanel gamePanel) {
         this.model = model;
         this.gamePanel = gamePanel;
-        this.gameLoop = new Timer(100, this);
+        this.gameLoop = new Timer(model.getBaseDelay(), this);
         this.gamePanel.setController(this);
         this.gamePanel.addKeyListener(this);
     }
@@ -29,6 +29,7 @@ public class GameController implements ActionListener, KeyListener {
         }
         gamePanel.showGameOverButtons(false);
         gamePanel.repaint();
+        gameLoop.setDelay(model.getBaseDelay());
         gameLoop.stop();
         gamePanel.requestFocusInWindow();
     }
@@ -36,6 +37,7 @@ public class GameController implements ActionListener, KeyListener {
     public void resetGame() {
         model.resetGame();
         gamePanel.showGameOverButtons(false);
+        gameLoop.setDelay(model.getBaseDelay());
         gameLoop.setDelay(100);
         gameLoop.stop();
         gamePanel.repaint();
@@ -60,6 +62,7 @@ public class GameController implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        boolean directionChanged = handleKeyPress(e.getKeyCode());
         boolean directionChanged = true;
         switch (e.getKeyCode()) {
             // Arrow keys
@@ -68,18 +71,35 @@ public class GameController implements ActionListener, KeyListener {
             case KeyEvent.VK_LEFT -> model.changeDirection(-1, 0);
             case KeyEvent.VK_RIGHT -> model.changeDirection(1, 0);
 
-            // WASD keys
-            case KeyEvent.VK_W -> model.changeDirection(0, -1);
-            case KeyEvent.VK_S -> model.changeDirection(0, 1);
-            case KeyEvent.VK_A -> model.changeDirection(-1, 0);
-            case KeyEvent.VK_D -> model.changeDirection(1, 0);
+        if (directionChanged && !gameLoop.isRunning() && !model.isGameOver()) {
+            gameLoop.start();
+        }
+    }
 
+    private boolean handleKeyPress(int keyCode) {
+        if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
+            model.changeDirection(0, -1);
+            return true;
+        }
+        if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
+            model.changeDirection(0, 1);
+            return true;
             default -> directionChanged = false;
         }
 
         if (directionChanged && !gameLoop.isRunning() && !model.isGameOver()) {
             gameLoop.start();
         }
+        if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
+            model.changeDirection(-1, 0);
+            return true;
+        }
+        if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
+            model.changeDirection(1, 0);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

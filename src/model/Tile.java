@@ -29,4 +29,14 @@ public class Tile {
     public void setY(int y) {
         this.y = y;
     }
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void setPosition(Tile other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
 }

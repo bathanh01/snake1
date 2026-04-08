@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+public class HorizontalWallWrapMap extends DefaultSinglePlayerMap {
+
+    private final List<Tile> wallTiles;
+
+    public HorizontalWallWrapMap(int boardWidth, int boardHeight, int tileSize) {
+        super(boardWidth, boardHeight, tileSize);
 public class HorizontalWallWrapMap implements SinglePlayerMap {
 
     private final int columns;
@@ -17,6 +23,14 @@ public class HorizontalWallWrapMap implements SinglePlayerMap {
     }
 
     @Override
+    public int normalizeX(int x) {
+        if (x < 0) {
+            return getColumns() - 1;
+        }
+        if (x >= getColumns()) {
+            return 0;
+        }
+        return x;
     public int getColumns() {
         return columns;
     }
@@ -33,6 +47,13 @@ public class HorizontalWallWrapMap implements SinglePlayerMap {
 
     @Override
     public int normalizeY(int y) {
+        if (y < 0) {
+            return getRows() - 1;
+        }
+        if (y >= getRows()) {
+            return 0;
+        }
+        return y;
         return (y + rows) % rows;
     }
 
@@ -57,6 +78,10 @@ public class HorizontalWallWrapMap implements SinglePlayerMap {
     }
 
     private List<Tile> createWallTiles() {
+        List<Tile> walls = new ArrayList<>();
+        int middleRow = getRows() / 2;
+
+        for (int x = 0; x < getColumns(); x++) {
         int middleRow = rows / 2;
         List<Tile> walls = new ArrayList<>();
 
