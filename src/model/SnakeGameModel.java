@@ -22,7 +22,6 @@ public class SnakeGameModel {
     private int velocityX;
     private int velocityY;
     private boolean gameOver;
-    private boolean softFieldVisual;
     private boolean desertVisual;
 
     public SnakeGameModel(int boardWidth, int boardHeight, int tileSize) {
@@ -38,14 +37,6 @@ public class SnakeGameModel {
     public void setMap(SinglePlayerMap map) {
         this.map = map;
         resetGame();
-    }
-
-    public void setSoftFieldVisual(boolean softFieldVisual) {
-        this.softFieldVisual = softFieldVisual;
-    }
-
-    public boolean isSoftFieldVisual() {
-        return softFieldVisual;
     }
 
     public void setDesertVisual(boolean desertVisual) {

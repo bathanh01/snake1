@@ -24,8 +24,6 @@ public final class ClassicSnakeRenderer {
 
     private static final BufferedImage HEAD_TINTED_STANDARD = multiplyTint(HEAD_IMAGE, 0.45f, 0.98f, 0.68f);
     private static final BufferedImage BODY_TINTED_STANDARD = multiplyTint(BODY_IMAGE, 0.45f, 0.98f, 0.68f);
-    private static final BufferedImage HEAD_TINTED_SOFT = multiplyTint(HEAD_IMAGE, 0.55f, 0.96f, 0.78f);
-    private static final BufferedImage BODY_TINTED_SOFT = multiplyTint(BODY_IMAGE, 0.55f, 0.96f, 0.78f);
     private static final BufferedImage HEAD_TINTED_DESERT = multiplyTint(HEAD_IMAGE, 0.92f, 0.32f, 0.22f);
     private static final BufferedImage BODY_TINTED_DESERT = multiplyTint(BODY_IMAGE, 0.92f, 0.32f, 0.22f);
 
@@ -37,23 +35,13 @@ public final class ClassicSnakeRenderer {
     }
 
     public static void drawSnake(Graphics2D graphics, Tile head, List<Tile> body, int tileSize, int velocityX, int velocityY,
-                                 boolean softFieldVisual, boolean desertVisual) {
+                                 boolean desertVisual) {
         if (head == null) {
             return;
         }
 
-        BufferedImage bodyImg;
-        BufferedImage headImg;
-        if (desertVisual) {
-            bodyImg = BODY_TINTED_DESERT;
-            headImg = HEAD_TINTED_DESERT;
-        } else if (softFieldVisual) {
-            bodyImg = BODY_TINTED_SOFT;
-            headImg = HEAD_TINTED_SOFT;
-        } else {
-            bodyImg = BODY_TINTED_STANDARD;
-            headImg = HEAD_TINTED_STANDARD;
-        }
+        BufferedImage bodyImg = desertVisual ? BODY_TINTED_DESERT : BODY_TINTED_STANDARD;
+        BufferedImage headImg = desertVisual ? HEAD_TINTED_DESERT : HEAD_TINTED_STANDARD;
 
         Tile previous = head;
         for (Tile segment : body) {

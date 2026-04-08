@@ -56,7 +56,6 @@ public class App {
                 twoPlayerGamePanel.requestFocusInWindow();
             } else {
                 SinglePlayerMapType mapType = menuPanel.getSelectedMapType();
-                gameModel.setSoftFieldVisual(mapType == SinglePlayerMapType.SOFT_FIELD);
                 gameModel.setDesertVisual(mapType == SinglePlayerMapType.DESERT);
                 if (mapType == SinglePlayerMapType.HORIZONTAL_WRAP) {
                     gameModel.setMap(new HorizontalWallWrapMap(boardWidth, boardHeight, 25));

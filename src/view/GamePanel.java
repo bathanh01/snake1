@@ -110,7 +110,6 @@ public class GamePanel extends JPanel {
                 model.getTileSize(),
                 model.getVelocityX(),
                 model.getVelocityY(),
-                model.isSoftFieldVisual(),
                 model.isDesertVisual()
         );
         graphics.dispose();
@@ -147,9 +146,6 @@ public class GamePanel extends JPanel {
         if (model.isDesertVisual()) {
             return new Color(210, 176, 120);
         }
-        if (model.isSoftFieldVisual()) {
-            return new Color(30, 42, 38);
-        }
         return new Color(24, 31, 42);
     }
 
@@ -157,18 +153,12 @@ public class GamePanel extends JPanel {
         if (model.isDesertVisual()) {
             return new Color(176, 142, 88);
         }
-        if (model.isSoftFieldVisual()) {
-            return new Color(48, 64, 58);
-        }
         return new Color(38, 50, 66);
     }
 
     private Color wallFillColor() {
         if (model.isDesertVisual()) {
             return new Color(120, 82, 48);
-        }
-        if (model.isSoftFieldVisual()) {
-            return new Color(95, 108, 104);
         }
         return new Color(82, 94, 112);
     }
