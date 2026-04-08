@@ -2,7 +2,6 @@ package view;
 
 import model.Tile;
 
-import java.awt.Graphics2D;
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -26,11 +25,6 @@ public final class ClassicSnakeRenderer {
     }
 
     public static void drawFood(Graphics2D graphics, Tile food, int tileSize) {
-        StyledSnakeRenderer.drawFood(graphics, food, tileSize, StyledSnakeRenderer.CLASSIC);
-    }
-
-    public static void drawSnake(Graphics2D graphics, Tile head, List<Tile> body, int tileSize, int velocityX, int velocityY) {
-        StyledSnakeRenderer.drawSnake(graphics, head, body, tileSize, velocityX, velocityY, StyledSnakeRenderer.CLASSIC);
         drawImage(graphics, FOOD_IMAGE, food.getX(), food.getY(), tileSize, 0);
     }
 
