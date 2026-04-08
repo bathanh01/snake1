@@ -4,10 +4,6 @@ import controller.TwoPlayerGameController;
 import model.Tile;
 import model.TwoPlayerSnakeGameModel;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import java.awt.BasicStroke;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -15,7 +11,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 
 public class TwoPlayerGamePanel extends JPanel {
 
@@ -32,14 +27,12 @@ public class TwoPlayerGamePanel extends JPanel {
         setLayout(null);
 
         restartButton = new JButton("Play Again");
-        styleActionButton(restartButton, new Color(48, 138, 92));
         restartButton.setFocusable(false);
         restartButton.setBounds(model.getBoardWidth() / 2 - 75, model.getBoardHeight() / 2 + 80, 150, 40);
         restartButton.setVisible(false);
         add(restartButton);
 
         menuButton = new JButton("Back to Menu");
-        styleActionButton(menuButton, new Color(128, 92, 54));
         menuButton.setFocusable(false);
         menuButton.setBounds(model.getBoardWidth() / 2 - 75, model.getBoardHeight() / 2 + 130, 150, 40);
         menuButton.setVisible(false);
@@ -95,14 +88,6 @@ public class TwoPlayerGamePanel extends JPanel {
     }
 
     private void drawFood(Graphics g, Tile food, Color color) {
-        drawTile(g, food, color);
-    }
-
-    private void drawSnake(Graphics g, Tile head, java.util.List<Tile> body, Color color) {
-        drawTile(g, head, color);
-
-        for (Tile segment : body) {
-            drawTile(g, segment, color);
         g.setColor(color);
         g.fillRect(
                 food.getX() * model.getTileSize(),
@@ -147,26 +132,6 @@ public class TwoPlayerGamePanel extends JPanel {
     }
 
     private void drawGameOver(Graphics g) {
-        Graphics2D graphics = (Graphics2D) g;
-        graphics.setColor(new Color(0, 0, 0, 150));
-        graphics.fillRect(0, 0, getWidth(), getHeight());
-
-        graphics.setColor(new Color(46, 52, 58, 220));
-        graphics.fillRoundRect(model.getBoardWidth() / 2 - 150, model.getBoardHeight() / 2 - 80, 300, 170, 24, 24);
-        graphics.setColor(new Color(180, 200, 214, 110));
-        graphics.setStroke(new BasicStroke(2f));
-        graphics.drawRoundRect(model.getBoardWidth() / 2 - 150, model.getBoardHeight() / 2 - 80, 300, 170, 24, 24);
-
-        graphics.setColor(Color.RED);
-        graphics.setFont(new Font("Arial", Font.BOLD, 40));
-
-        String text = "GAME OVER";
-        FontMetrics titleMetrics = graphics.getFontMetrics();
-        int titleX = (model.getBoardWidth() - titleMetrics.stringWidth(text)) / 2;
-        int titleY = model.getBoardHeight() / 2 - 10;
-        graphics.drawString(text, titleX, titleY);
-
-        graphics.setFont(new Font("Arial", Font.PLAIN, 20));
         g.setColor(Color.RED);
         g.setFont(new Font("Arial", Font.BOLD, 40));
 
@@ -182,33 +147,6 @@ public class TwoPlayerGamePanel extends JPanel {
         int scoreY = titleY + 30;
         int centerX = model.getBoardWidth() / 2;
         int gap = 30;
-        FontMetrics scoreMetrics = graphics.getFontMetrics();
-        int playerOneX = centerX - gap - scoreMetrics.stringWidth(playerOneScore);
-        int playerTwoX = centerX + gap;
-        graphics.drawString(playerOneScore, playerOneX, scoreY);
-        graphics.drawString(playerTwoScore, playerTwoX, scoreY);
-
-        String winnerText = model.getWinnerText();
-        int winnerX = (model.getBoardWidth() - scoreMetrics.stringWidth(winnerText)) / 2;
-        graphics.drawString(winnerText, winnerX, scoreY + 30);
-    }
-
-    private void drawTile(Graphics g, Tile tile, Color color) {
-        g.setColor(color);
-        g.fillRect(
-                tile.getX() * model.getTileSize(),
-                tile.getY() * model.getTileSize(),
-                model.getTileSize(),
-                model.getTileSize()
-        );
-    }
-
-    private void styleActionButton(JButton button, Color background) {
-        button.setFocusable(false);
-        button.setForeground(Color.WHITE);
-        button.setBackground(background);
-        button.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
-        button.setFocusPainted(false);
         FontMetrics scoreMetrics = g.getFontMetrics();
         int playerOneX = centerX - gap - scoreMetrics.stringWidth(playerOneScore);
         int playerTwoX = centerX + gap;
