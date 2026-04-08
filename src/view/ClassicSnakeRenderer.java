@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +22,13 @@ public final class ClassicSnakeRenderer {
     private static final BufferedImage BODY_IMAGE = loadImage(BODY_PATH);
     private static final BufferedImage FOOD_IMAGE = loadImage(FOOD_PATH);
 
+    private static final BufferedImage HEAD_TINTED_STANDARD = multiplyTint(HEAD_IMAGE, 0.45f, 0.98f, 0.68f);
+    private static final BufferedImage BODY_TINTED_STANDARD = multiplyTint(BODY_IMAGE, 0.45f, 0.98f, 0.68f);
+    private static final BufferedImage HEAD_TINTED_SOFT = multiplyTint(HEAD_IMAGE, 0.55f, 0.96f, 0.78f);
+    private static final BufferedImage BODY_TINTED_SOFT = multiplyTint(BODY_IMAGE, 0.55f, 0.96f, 0.78f);
+    private static final BufferedImage HEAD_TINTED_DESERT = multiplyTint(HEAD_IMAGE, 0.92f, 0.32f, 0.22f);
+    private static final BufferedImage BODY_TINTED_DESERT = multiplyTint(BODY_IMAGE, 0.92f, 0.32f, 0.22f);
+
     private ClassicSnakeRenderer() {
     }
 
@@ -28,19 +36,33 @@ public final class ClassicSnakeRenderer {
         drawImage(graphics, FOOD_IMAGE, food.getX(), food.getY(), tileSize, 0);
     }
 
-    public static void drawSnake(Graphics2D graphics, Tile head, List<Tile> body, int tileSize, int velocityX, int velocityY) {
+    public static void drawSnake(Graphics2D graphics, Tile head, List<Tile> body, int tileSize, int velocityX, int velocityY,
+                                 boolean softFieldVisual, boolean desertVisual) {
         if (head == null) {
             return;
         }
 
+        BufferedImage bodyImg;
+        BufferedImage headImg;
+        if (desertVisual) {
+            bodyImg = BODY_TINTED_DESERT;
+            headImg = HEAD_TINTED_DESERT;
+        } else if (softFieldVisual) {
+            bodyImg = BODY_TINTED_SOFT;
+            headImg = HEAD_TINTED_SOFT;
+        } else {
+            bodyImg = BODY_TINTED_STANDARD;
+            headImg = HEAD_TINTED_STANDARD;
+        }
+
         Tile previous = head;
         for (Tile segment : body) {
-            drawBodyConnector(graphics, previous, segment, tileSize);
-            drawImage(graphics, BODY_IMAGE, segment.getX(), segment.getY(), tileSize, 0);
+            drawBodyConnector(graphics, previous, segment, tileSize, bodyImg);
+            drawImage(graphics, bodyImg, segment.getX(), segment.getY(), tileSize, 0);
             previous = segment;
         }
 
-        drawImage(graphics, HEAD_IMAGE, head.getX(), head.getY(), tileSize, headRotation(velocityX, velocityY));
+        drawImage(graphics, headImg, head.getX(), head.getY(), tileSize, headRotation(velocityX, velocityY));
     }
 
     private static void drawImage(Graphics2D graphics, BufferedImage image, int gridX, int gridY, int tileSize, double rotation) {
@@ -54,7 +76,7 @@ public final class ClassicSnakeRenderer {
         graphics.setTransform(previousTransform);
     }
 
-    private static void drawBodyConnector(Graphics2D graphics, Tile start, Tile end, int tileSize) {
+    private static void drawBodyConnector(Graphics2D graphics, Tile start, Tile end, int tileSize, BufferedImage bodyImage) {
         int deltaX = end.getX() - start.getX();
         int deltaY = end.getY() - start.getY();
 
@@ -73,13 +95,19 @@ public final class ClassicSnakeRenderer {
         int connectorHeight = deltaY != 0 ? tileSize + tileSize / 2 : tileSize;
 
         graphics.drawImage(
-                BODY_IMAGE,
+                bodyImage,
                 connectorCenterX - connectorWidth / 2,
                 connectorCenterY - connectorHeight / 2,
                 connectorWidth,
                 connectorHeight,
                 null
         );
+    }
+
+    private static BufferedImage multiplyTint(BufferedImage source, float red, float green, float blue) {
+        float[] scales = { red, green, blue, 1f };
+        float[] offsets = new float[4];
+        return new RescaleOp(scales, offsets, null).filter(source, null);
     }
 
     private static double headRotation(int directionX, int directionY) {

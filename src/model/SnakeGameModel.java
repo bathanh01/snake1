@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class SnakeGameModel {
 
-    private static final int BASE_DELAY = 100;
+    private static final int BASE_DELAY = 120;
     private static final int MIN_DELAY = 30;
 
     private final int boardWidth;
@@ -22,6 +22,8 @@ public class SnakeGameModel {
     private int velocityX;
     private int velocityY;
     private boolean gameOver;
+    private boolean softFieldVisual;
+    private boolean desertVisual;
 
     public SnakeGameModel(int boardWidth, int boardHeight, int tileSize) {
         this.boardWidth = boardWidth;
@@ -38,8 +40,24 @@ public class SnakeGameModel {
         resetGame();
     }
 
+    public void setSoftFieldVisual(boolean softFieldVisual) {
+        this.softFieldVisual = softFieldVisual;
+    }
+
+    public boolean isSoftFieldVisual() {
+        return softFieldVisual;
+    }
+
+    public void setDesertVisual(boolean desertVisual) {
+        this.desertVisual = desertVisual;
+    }
+
+    public boolean isDesertVisual() {
+        return desertVisual;
+    }
+
     public void resetGame() {
-        snakeHead = new Tile(5, 5);
+        snakeHead = new Tile(map.getInitialSnakeHeadX(), map.getInitialSnakeHeadY());
         snakeBody.clear();
         food = new Tile(10, 10);
         velocityX = 0;
@@ -51,6 +69,14 @@ public class SnakeGameModel {
     public int move() {
         if (gameOver) {
             return BASE_DELAY;
+        }
+
+        int nextX = map.normalizeX(snakeHead.getX() + velocityX);
+        int nextY = map.normalizeY(snakeHead.getY() + velocityY);
+        Tile nextCell = new Tile(nextX, nextY);
+        if (map.isOutOfBounds(nextCell) || map.hitsWall(nextCell)) {
+            gameOver = true;
+            return Math.max(MIN_DELAY, BASE_DELAY - snakeBody.size() * 2);
         }
 
         if (isCollision(snakeHead, food)) {
@@ -70,10 +96,10 @@ public class SnakeGameModel {
             }
         }
 
-        snakeHead.setX(map.normalizeX(snakeHead.getX() + velocityX));
-        snakeHead.setY(map.normalizeY(snakeHead.getY() + velocityY));
+        snakeHead.setX(nextX);
+        snakeHead.setY(nextY);
 
-        if (map.isOutOfBounds(snakeHead) || map.hitsWall(snakeHead) || hasSelfCollision()) {
+        if (hasSelfCollision()) {
             gameOver = true;
         }
 

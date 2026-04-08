@@ -21,6 +21,8 @@ public class MenuPanel extends JPanel {
     private final JButton twoPlayerButton;
     private final JButton mapButton;
     private final JButton defaultMapButton;
+    private final JButton softFieldMapButton;
+    private final JButton desertMapButton;
     private final JButton wrapMapButton;
 
     private int selectedPlayers = 1;
@@ -63,19 +65,33 @@ public class MenuPanel extends JPanel {
         add(twoPlayerButton);
 
         mapButton = new JButton("Select Map");
-        mapButton.setBounds(200, 440, 200, 50);
+        mapButton.setBounds(200, 400, 200, 50);
         mapButton.setFont(new Font("Arial", Font.BOLD, 18));
         add(mapButton);
 
         defaultMapButton = new JButton("Default Map");
-        defaultMapButton.setBounds(200, 500, 200, 40);
+        defaultMapButton.setBounds(200, 452, 200, 32);
         defaultMapButton.setFont(new Font("Arial", Font.PLAIN, 16));
         defaultMapButton.setBackground(Color.GREEN);
         defaultMapButton.setVisible(false);
         add(defaultMapButton);
 
+        softFieldMapButton = new JButton("Soft Field");
+        softFieldMapButton.setBounds(200, 486, 200, 32);
+        softFieldMapButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        softFieldMapButton.setBackground(Color.LIGHT_GRAY);
+        softFieldMapButton.setVisible(false);
+        add(softFieldMapButton);
+
+        desertMapButton = new JButton("Desert");
+        desertMapButton.setBounds(200, 520, 200, 32);
+        desertMapButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        desertMapButton.setBackground(Color.LIGHT_GRAY);
+        desertMapButton.setVisible(false);
+        add(desertMapButton);
+
         wrapMapButton = new JButton("Wrap Wall Map");
-        wrapMapButton.setBounds(200, 550, 200, 40);
+        wrapMapButton.setBounds(200, 554, 200, 32);
         wrapMapButton.setFont(new Font("Arial", Font.PLAIN, 16));
         wrapMapButton.setBackground(Color.LIGHT_GRAY);
         wrapMapButton.setVisible(false);
@@ -106,22 +122,56 @@ public class MenuPanel extends JPanel {
         mapButton.addActionListener(e -> {
             boolean visible = !defaultMapButton.isVisible();
             defaultMapButton.setVisible(visible);
+            softFieldMapButton.setVisible(visible);
+            desertMapButton.setVisible(visible);
             wrapMapButton.setVisible(visible);
         });
 
         defaultMapButton.addActionListener(e -> {
             selectedMapType = SinglePlayerMapType.DEFAULT;
             defaultMapButton.setBackground(Color.GREEN);
+            softFieldMapButton.setBackground(Color.LIGHT_GRAY);
+            desertMapButton.setBackground(Color.LIGHT_GRAY);
             wrapMapButton.setBackground(Color.LIGHT_GRAY);
             defaultMapButton.setVisible(false);
+            softFieldMapButton.setVisible(false);
+            desertMapButton.setVisible(false);
+            wrapMapButton.setVisible(false);
+        });
+
+        softFieldMapButton.addActionListener(e -> {
+            selectedMapType = SinglePlayerMapType.SOFT_FIELD;
+            defaultMapButton.setBackground(Color.LIGHT_GRAY);
+            softFieldMapButton.setBackground(Color.GREEN);
+            desertMapButton.setBackground(Color.LIGHT_GRAY);
+            wrapMapButton.setBackground(Color.LIGHT_GRAY);
+            defaultMapButton.setVisible(false);
+            softFieldMapButton.setVisible(false);
+            desertMapButton.setVisible(false);
+            wrapMapButton.setVisible(false);
+        });
+
+        desertMapButton.addActionListener(e -> {
+            selectedMapType = SinglePlayerMapType.DESERT;
+            defaultMapButton.setBackground(Color.LIGHT_GRAY);
+            softFieldMapButton.setBackground(Color.LIGHT_GRAY);
+            desertMapButton.setBackground(Color.GREEN);
+            wrapMapButton.setBackground(Color.LIGHT_GRAY);
+            defaultMapButton.setVisible(false);
+            softFieldMapButton.setVisible(false);
+            desertMapButton.setVisible(false);
             wrapMapButton.setVisible(false);
         });
 
         wrapMapButton.addActionListener(e -> {
             selectedMapType = SinglePlayerMapType.HORIZONTAL_WRAP;
             defaultMapButton.setBackground(Color.LIGHT_GRAY);
+            softFieldMapButton.setBackground(Color.LIGHT_GRAY);
+            desertMapButton.setBackground(Color.LIGHT_GRAY);
             wrapMapButton.setBackground(Color.GREEN);
             defaultMapButton.setVisible(false);
+            softFieldMapButton.setVisible(false);
+            desertMapButton.setVisible(false);
             wrapMapButton.setVisible(false);
         });
     }

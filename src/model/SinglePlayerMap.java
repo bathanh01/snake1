@@ -17,4 +17,12 @@ public interface SinglePlayerMap {
     boolean hitsWall(Tile tile);
 
     List<Tile> getWallTiles();
+
+    default int getInitialSnakeHeadX() {
+        return 5;
+    }
+
+    default int getInitialSnakeHeadY() {
+        return 5;
+    }
 }

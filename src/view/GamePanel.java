@@ -23,7 +23,7 @@ public class GamePanel extends JPanel {
         this.model = model;
 
         setPreferredSize(new Dimension(model.getBoardWidth(), model.getBoardHeight()));
-        setBackground(Color.BLACK);
+        setBackground(new Color(24, 31, 42));
         setFocusable(true);
         setLayout(null);
 
@@ -55,6 +55,7 @@ public class GamePanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
+        setBackground(backgroundForBoard());
         super.paintComponent(g);
         drawGrid(g);
         drawWalls(g);
@@ -68,6 +69,8 @@ public class GamePanel extends JPanel {
     private void drawGrid(Graphics g) {
         int columns = model.getBoardWidth() / model.getTileSize();
         int rows = model.getBoardHeight() / model.getTileSize();
+
+        g.setColor(gridLineColor());
 
         for (int column = 0; column <= columns; column++) {
             int x = column * model.getTileSize();
@@ -87,7 +90,7 @@ public class GamePanel extends JPanel {
     }
 
     private void drawWalls(Graphics g) {
-        g.setColor(new Color(120, 120, 120));
+        g.setColor(wallFillColor());
         for (Tile wallTile : model.getMap().getWallTiles()) {
             g.fillRect(
                     wallTile.getX() * model.getTileSize(),
@@ -106,7 +109,9 @@ public class GamePanel extends JPanel {
                 model.getSnakeBody(),
                 model.getTileSize(),
                 model.getVelocityX(),
-                model.getVelocityY()
+                model.getVelocityY(),
+                model.isSoftFieldVisual(),
+                model.isDesertVisual()
         );
         graphics.dispose();
     }
@@ -117,13 +122,13 @@ public class GamePanel extends JPanel {
             return;
         }
 
-        g.setColor(Color.WHITE);
+        g.setColor(new Color(235, 238, 242));
         g.setFont(new Font("Arial", Font.PLAIN, 16));
         g.drawString("Score: " + model.getScore(), 10, 20);
     }
 
     private void drawGameOver(Graphics g) {
-        g.setColor(Color.RED);
+        g.setColor(new Color(255, 108, 98));
         g.setFont(new Font("Arial", Font.BOLD, 40));
 
         String text = "GAME OVER";
@@ -136,5 +141,35 @@ public class GamePanel extends JPanel {
         String scoreText = "Score: " + model.getScore();
         int scoreX = (model.getBoardWidth() - g.getFontMetrics().stringWidth(scoreText)) / 2;
         g.drawString(scoreText, scoreX, y + 30);
+    }
+
+    private Color backgroundForBoard() {
+        if (model.isDesertVisual()) {
+            return new Color(210, 176, 120);
+        }
+        if (model.isSoftFieldVisual()) {
+            return new Color(30, 42, 38);
+        }
+        return new Color(24, 31, 42);
+    }
+
+    private Color gridLineColor() {
+        if (model.isDesertVisual()) {
+            return new Color(176, 142, 88);
+        }
+        if (model.isSoftFieldVisual()) {
+            return new Color(48, 64, 58);
+        }
+        return new Color(38, 50, 66);
+    }
+
+    private Color wallFillColor() {
+        if (model.isDesertVisual()) {
+            return new Color(120, 82, 48);
+        }
+        if (model.isSoftFieldVisual()) {
+            return new Color(95, 108, 104);
+        }
+        return new Color(82, 94, 112);
     }
 }
