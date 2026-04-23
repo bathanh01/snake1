@@ -1,6 +1,5 @@
 package database;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
@@ -8,21 +7,18 @@ import java.sql.*;
 public class ScoreDAO {
 
     public static void saveScore(String playerName, int score, int playTime){
-        try{
-            Connection conn = DatabaseConnection.getConnection();
+        String sql =
+                "INSERT INTO player_scores(player_name, score, play_time_seconds) VALUES(?,?,?)";
 
-            String sql =
-                    "INSERT INTO player_scores(player_name, score, play_time_seconds) VALUES(?,?,?)";
-
-            PreparedStatement ps = conn.prepareStatement(sql);
-
+        try (
+                Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
             ps.setString(1, playerName);
             ps.setInt(2, score);
             ps.setInt(3, playTime);
 
             ps.executeUpdate();
-
-            conn.close();
 
         } catch(Exception e){
             e.printStackTrace();
@@ -35,7 +31,8 @@ public class ScoreDAO {
         String sql =
                 "SELECT player_name, score " +
                         "FROM player_scores " +
-                        "ORDER BY score DESC";
+                        "ORDER BY score DESC, play_time_seconds ASC " +
+                        "LIMIT 5";
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
@@ -64,19 +61,17 @@ public class ScoreDAO {
 
         List<String> scores = new ArrayList<>();
 
-        try{
-            Connection conn = DatabaseConnection.getConnection();
+        String sql =
+                "SELECT player_name, score, play_time_seconds " +
+                        "FROM player_scores " +
+                        "ORDER BY score DESC, play_time_seconds ASC " +
+                        "LIMIT 10";
 
-            String sql =
-                    "SELECT player_name, score, play_time_seconds " +
-                            "FROM player_scores " +
-                            "ORDER BY score DESC, play_time_seconds ASC " +
-                            "LIMIT 10";
-
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ResultSet rs = ps.executeQuery();
-
+        try (
+                Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
             int rank = 1;
 
             while(rs.next()){
@@ -93,8 +88,6 @@ public class ScoreDAO {
 
                 rank++;
             }
-
-            conn.close();
 
         }catch(Exception e){
             e.printStackTrace();
