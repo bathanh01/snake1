@@ -1,9 +1,11 @@
 package model;
-
+import database.ScoreDAO;
+import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
 
 public class SnakeGameModel {
 
@@ -23,10 +25,17 @@ public class SnakeGameModel {
     private int velocityY;
     private boolean gameOver;
     private boolean desertVisual;
-
+    private long startTime;
+    private String playerName;
+    public void setPlayerName(String playerName){
+        this.playerName = playerName;
+    }
     public SnakeGameModel(int boardWidth, int boardHeight, int tileSize) {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
+
+        startTime =
+                System.currentTimeMillis();
         this.tileSize = tileSize;
         this.random = new Random();
         this.map = new DefaultSinglePlayerMap(boardWidth, boardHeight, tileSize);
@@ -67,6 +76,15 @@ public class SnakeGameModel {
         Tile nextCell = new Tile(nextX, nextY);
         if (map.isOutOfBounds(nextCell) || map.hitsWall(nextCell)) {
             gameOver = true;
+            int playTime =
+                    (int)((System.currentTimeMillis()
+                            -startTime)/1000);
+
+            ScoreDAO.saveScore(
+                    playerName,
+                    snakeBody.size(),
+                    playTime
+            );
             return Math.max(MIN_DELAY, BASE_DELAY - snakeBody.size() * 2);
         }
 

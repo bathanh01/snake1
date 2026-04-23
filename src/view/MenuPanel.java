@@ -12,7 +12,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 
-public class MenuPanel extends JPanel {
+public class    MenuPanel extends JPanel {
 
     private final Image backgroundImage;
     private final JButton playButton;
@@ -40,15 +40,25 @@ public class MenuPanel extends JPanel {
         add(title);
 
         playButton = new JButton("Play Game");
-        playButton.setBounds(200, 190, 200, 50);
+        playButton.setBounds(200,190,200,50);
         playButton.setFont(new Font("Arial", Font.BOLD, 18));
         add(playButton);
 
+
         modeButton = new JButton("Select Mode");
-        modeButton.setBounds(200, 260, 200, 50);
+        modeButton.setBounds(200,260,200,50);
         modeButton.setFont(new Font("Arial", Font.BOLD, 18));
         add(modeButton);
 
+
+        JButton leaderboardButton = new JButton("Bảng xếp hạng");
+        leaderboardButton.setBounds(200,330,200,50); // khác vị trí, không đè Play
+        leaderboardButton.setFont(new Font("Arial", Font.BOLD, 18));
+        add(leaderboardButton);
+
+        leaderboardButton.addActionListener(e -> {
+            new LeaderboardFrame();
+        });
         onePlayerButton = new JButton("1 Player");
         onePlayerButton.setBounds(200, 320, 200, 40);
         onePlayerButton.setFont(new Font("Arial", Font.PLAIN, 16));
