@@ -3,29 +3,39 @@ package view;
 import model.Tile;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
+import javax.swing.ImageIcon;
 public final class ClassicSnakeRenderer {
 
     private static final String HEAD_PATH = "src/assets/classic_snake_head.png";
     private static final String BODY_PATH = "src/assets/classic_snake.png";
     private static final String FOOD_PATH = "src/assets/apple.png";
 
+    private static java.awt.Image appleImage;       // táo đỏ
+    private static java.awt.Image appleGreenImage;  // táo xanh
+   //private static java.awt.Image blackAppleImage;  // táo đen
+
     private static final BufferedImage HEAD_IMAGE = loadImage(HEAD_PATH);
     private static final BufferedImage BODY_IMAGE = loadImage(BODY_PATH);
     private static final BufferedImage FOOD_IMAGE = loadImage(FOOD_PATH);
 
-    private static final BufferedImage HEAD_TINTED_STANDARD = multiplyTint(HEAD_IMAGE, 0.45f, 0.98f, 0.68f);
-    private static final BufferedImage BODY_TINTED_STANDARD = multiplyTint(BODY_IMAGE, 0.45f, 0.98f, 0.68f);
-    private static final BufferedImage HEAD_TINTED_DESERT = multiplyTint(HEAD_IMAGE, 0.92f, 0.32f, 0.22f);
-    private static final BufferedImage BODY_TINTED_DESERT = multiplyTint(BODY_IMAGE, 0.92f, 0.32f, 0.22f);
+    private static final BufferedImage HEAD_TINTED_STANDARD =
+            multiplyTint(HEAD_IMAGE, 0.45f, 0.98f, 0.68f);
+
+    private static final BufferedImage BODY_TINTED_STANDARD =
+            multiplyTint(BODY_IMAGE, 0.45f, 0.98f, 0.68f);
+
+    private static final BufferedImage HEAD_TINTED_DESERT =
+            multiplyTint(HEAD_IMAGE, 0.92f, 0.32f, 0.22f);
+
+    private static final BufferedImage BODY_TINTED_DESERT =
+            multiplyTint(BODY_IMAGE, 0.92f, 0.32f, 0.22f);
 
     private ClassicSnakeRenderer() {
     }
@@ -34,6 +44,24 @@ public final class ClassicSnakeRenderer {
         drawImage(graphics, FOOD_IMAGE, food.getX(), food.getY(), tileSize, 0);
     }
 
+    static {
+
+        appleGreenImage = new ImageIcon("src/assets/apple1.png").getImage();
+
+//
+
+        appleImage = new ImageIcon("src/assets/apple.png").getImage();
+    }
+
+    public static java.awt.Image getAppleImage() {
+        return appleImage;
+    }
+//    public static java.awt.Image getBlackAppleImage() {
+//        return blackAppleImage;
+//    }
+    public static java.awt.Image getAppleGreenImage() {
+        return appleGreenImage;
+    }
     public static void drawSnake(Graphics2D graphics, Tile head, List<Tile> body, int tileSize, int velocityX, int velocityY,
                                  boolean desertVisual) {
         if (head == null) {

@@ -143,6 +143,21 @@ public class TwoPlayerSnakeGameModel {
     public boolean isGameOver() {
         return gameOver;
     }
+    public int getPlayerOneVelocityX() {
+        return playerOne.velocityX;
+    }
+
+    public int getPlayerOneVelocityY() {
+        return playerOne.velocityY;
+    }
+
+    public int getPlayerTwoVelocityX() {
+        return playerTwo.velocityX;
+    }
+
+    public int getPlayerTwoVelocityY() {
+        return playerTwo.velocityY;
+    }
 
     public boolean isPlayerOneAlive() {
         return playerOneAlive;

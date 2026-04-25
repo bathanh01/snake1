@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class TwoPlayerGamePanel extends JPanel {
 
@@ -52,21 +53,57 @@ public class TwoPlayerGamePanel extends JPanel {
         menuButton.setVisible(visible);
     }
 
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawGrid(g);
         if (model.shouldShowPlayerOneFood()) {
-            drawFood(g, model.getPlayerOneFood(), new Color(144, 238, 144));
+            drawFood(
+                    g,
+                    model.getPlayerOneFood(),
+                    ClassicSnakeRenderer.getAppleGreenImage()
+            );
         }
         if (model.shouldShowPlayerTwoFood()) {
-            drawFood(g, model.getPlayerTwoFood(), new Color(135, 206, 250));
+            drawFood(
+                    g,
+                    model.getPlayerTwoFood(),
+                    ClassicSnakeRenderer.getAppleImage()
+            );
         }
         if (model.isPlayerOneAlive() || model.isGameOver()) {
-            drawSnake(g, model.getPlayerOneHead(), model.getPlayerOneBody(), new Color(57, 255, 20));
+
+            Graphics2D g2 = (Graphics2D) g.create();
+
+            ClassicSnakeRenderer.drawSnake(
+                    g2,
+                    model.getPlayerOneHead(),
+                    model.getPlayerOneBody(),
+                    model.getTileSize(),
+                    model.getPlayerOneVelocityX(),
+                    model.getPlayerOneVelocityY(),
+                    false
+            );
+
+            g2.dispose();
         }
+
         if (model.isPlayerTwoAlive() || model.isGameOver()) {
-            drawSnake(g, model.getPlayerTwoHead(), model.getPlayerTwoBody(), new Color(0, 191, 255));
+
+            Graphics2D g2 = (Graphics2D) g.create();
+
+            ClassicSnakeRenderer.drawSnake(
+                    g2,
+                    model.getPlayerTwoHead(),
+                    model.getPlayerTwoBody(),
+                    model.getTileSize(),
+                    model.getPlayerTwoVelocityX(),
+                    model.getPlayerTwoVelocityY(),
+                    true
+            );
+
+            g2.dispose();
         }
         drawHud(g);
     }
@@ -87,33 +124,31 @@ public class TwoPlayerGamePanel extends JPanel {
         }
     }
 
-    private void drawFood(Graphics g, Tile food, Color color) {
-        g.setColor(color);
-        g.fillRect(
-                food.getX() * model.getTileSize(),
-                food.getY() * model.getTileSize(),
-                model.getTileSize(),
-                model.getTileSize()
-        );
-    }
+    private void drawFood(Graphics g, Tile food, java.awt.Image img) {
 
-    private void drawSnake(Graphics g, Tile head, java.util.List<Tile> body, Color color) {
-        g.setColor(color);
-        g.fillRect(
-                head.getX() * model.getTileSize(),
-                head.getY() * model.getTileSize(),
-                model.getTileSize(),
-                model.getTileSize()
-        );
+        if (img == null) {
 
-        for (Tile segment : body) {
+            // fallback test nếu ảnh không load
+            g.setColor(Color.RED);
+
             g.fillRect(
-                    segment.getX() * model.getTileSize(),
-                    segment.getY() * model.getTileSize(),
+                    food.getX() * model.getTileSize(),
+                    food.getY() * model.getTileSize(),
                     model.getTileSize(),
                     model.getTileSize()
             );
+
+            return;
         }
+
+        g.drawImage(
+                img,
+                food.getX() * model.getTileSize(),
+                food.getY() * model.getTileSize(),
+                model.getTileSize(),
+                model.getTileSize(),
+                null
+        );
     }
 
     private void drawHud(Graphics g) {

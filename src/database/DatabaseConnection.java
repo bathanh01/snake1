@@ -10,7 +10,7 @@ public class DatabaseConnection {
             "jdbc:mysql://localhost:3306/snake_game";
 
     private static final String USER = "root";
-    private static final String PASSWORD = "123456";
+    private static final String PASSWORD = "278204";
 
     private DatabaseConnection() {
     }
