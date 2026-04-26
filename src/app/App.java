@@ -43,48 +43,29 @@ public class App {
                         "Nhập tên người chơi:"
                 );
 
-                if (playerName == null || playerName.trim().isEmpty()) {
+                if(playerName == null || playerName.trim().isEmpty()){
                     return;
                 }
 
                 gameModel.setPlayerName(playerName);
             }
 
-            // LUÔN chạy phần này sau khi nhập tên hợp lệ
-
             GameMode selectedMode =
                     menuPanel.getSelectedPlayers() == 2
                             ? GameMode.TWO_PLAYER
                             : GameMode.SINGLE_PLAYER;
 
-            if (selectedMode == GameMode.TWO_PLAYER) {
+
+            if(selectedMode == GameMode.TWO_PLAYER){
 
                 twoPlayerGameController.startGame();
-                cardLayout.show(mainPanel, "twoPlayerGame");
+
+                cardLayout.show(mainPanel,"twoPlayerGame");
+
                 twoPlayerGamePanel.requestFocusInWindow();
 
-            } else {
-
-                // 1 player start
-                gameController.startGame();
-                cardLayout.show(mainPanel, "game");
-                gamePanel.requestFocusInWindow();
             }
-
-        });
-
-                // phần code bắt đầu game giữ nguyên bên dưới...
-            GameMode selectedMode =
-                    menuPanel.getSelectedPlayers() == 2
-                            ? GameMode.TWO_PLAYER
-                            : GameMode.SINGLE_PLAYER;
-            if (selectedMode == GameMode.TWO_PLAYER) {
-
-                twoPlayerGameController.startGame();
-                cardLayout.show(mainPanel, "twoPlayerGame");
-                twoPlayerGamePanel.requestFocusInWindow();
-
-            } else {
+            else {
 
                 SinglePlayerMapType mapType =
                         menuPanel.getSelectedMapType();
@@ -93,36 +74,98 @@ public class App {
                         mapType == SinglePlayerMapType.DESERT
                 );
 
-                if (mapType == SinglePlayerMapType.HORIZONTAL_WRAP) {
+                if(mapType == SinglePlayerMapType.HORIZONTAL_WRAP){
 
                     gameModel.setMap(
                             new HorizontalWallWrapMap(
-                                    boardWidth, boardHeight, 25
+                                    boardWidth,
+                                    boardHeight,
+                                    25
                             )
                     );
 
-                } else if (mapType == SinglePlayerMapType.DESERT) {
+                }
+                else if(mapType == SinglePlayerMapType.DESERT){
 
                     gameModel.setMap(
                             new DesertSinglePlayerMap(
-                                    boardWidth, boardHeight, 25
+                                    boardWidth,
+                                    boardHeight,
+                                    25
                             )
                     );
 
-                } else {
+                }
+                else{
 
                     gameModel.setMap(
                             new DefaultSinglePlayerMap(
-                                    boardWidth, boardHeight, 25
+                                    boardWidth,
+                                    boardHeight,
+                                    25
                             )
                     );
                 }
 
                 gameController.startGame();
-                cardLayout.show(mainPanel, "game");
+
+                cardLayout.show(mainPanel,"game");
+
                 gamePanel.requestFocusInWindow();
             }
-        ;
+
+        });
+
+                // phần code bắt đầu game giữ nguyên bên dưới...
+//            GameMode selectedMode =
+//                    menuPanel.getSelectedPlayers() == 2
+//                            ? GameMode.TWO_PLAYER
+//                            : GameMode.SINGLE_PLAYER;
+//            if (selectedMode == GameMode.TWO_PLAYER) {
+//
+//                twoPlayerGameController.startGame();
+//                cardLayout.show(mainPanel, "twoPlayerGame");
+//                twoPlayerGamePanel.requestFocusInWindow();
+//
+//            } else {
+//
+//                SinglePlayerMapType mapType =
+//                        menuPanel.getSelectedMapType();
+//
+//                gameModel.setDesertVisual(
+//                        mapType == SinglePlayerMapType.DESERT
+//                );
+//
+//                if (mapType == SinglePlayerMapType.HORIZONTAL_WRAP) {
+//
+//                    gameModel.setMap(
+//                            new HorizontalWallWrapMap(
+//                                    boardWidth, boardHeight, 25
+//                            )
+//                    );
+//
+//                } else if (mapType == SinglePlayerMapType.DESERT) {
+//
+//                    gameModel.setMap(
+//                            new DesertSinglePlayerMap(
+//                                    boardWidth, boardHeight, 25
+//                            )
+//                    );
+//
+//                } else {
+//
+//                    gameModel.setMap(
+//                            new DefaultSinglePlayerMap(
+//                                    boardWidth, boardHeight, 25
+//                            )
+//                    );
+//                }
+//
+//                gameController.startGame();
+//                cardLayout.show(mainPanel, "game");
+//                gamePanel.requestFocusInWindow();
+//            }
+//        ;
         gamePanel.setMenuAction(() -> {
             gameController.resetGame();
             cardLayout.show(mainPanel, "menu");

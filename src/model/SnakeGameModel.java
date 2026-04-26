@@ -30,16 +30,25 @@ public class SnakeGameModel {
     public void setPlayerName(String playerName){
         this.playerName = playerName;
     }
-    public SnakeGameModel(int boardWidth, int boardHeight, int tileSize) {
+    public SnakeGameModel(
+            int boardWidth,
+            int boardHeight,
+            int tileSize
+    ){
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
-
-        startTime =
-                System.currentTimeMillis();
         this.tileSize = tileSize;
+
         this.random = new Random();
-        this.map = new DefaultSinglePlayerMap(boardWidth, boardHeight, tileSize);
+
+        this.map = new DefaultSinglePlayerMap(
+                boardWidth,
+                boardHeight,
+                tileSize
+        );
+
         this.snakeBody = new ArrayList<>();
+
         resetGame();
     }
 
