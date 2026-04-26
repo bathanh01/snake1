@@ -51,7 +51,7 @@ public class    MenuPanel extends JPanel {
         add(modeButton);
 
 
-        JButton leaderboardButton = new JButton("Bảng xếp hạng");
+        final JButton leaderboardButton = new JButton("Bảng xếp hạng");
         leaderboardButton.setBounds(200,330,200,50); // khác vị trí, không đè Play
         leaderboardButton.setFont(new Font("Arial", Font.BOLD, 18));
         add(leaderboardButton);
@@ -101,24 +101,25 @@ public class    MenuPanel extends JPanel {
 
         modeButton.addActionListener(e -> {
             boolean visible = !onePlayerButton.isVisible();
+
             onePlayerButton.setVisible(visible);
             twoPlayerButton.setVisible(visible);
+
+            leaderboardButton.setVisible(!visible); // ẩn khi menu mode xổ ra
         });
 
         onePlayerButton.addActionListener(e -> {
             selectedPlayers = 1;
-            onePlayerButton.setBackground(Color.GREEN);
-            twoPlayerButton.setBackground(Color.LIGHT_GRAY);
             onePlayerButton.setVisible(false);
             twoPlayerButton.setVisible(false);
+            leaderboardButton.setVisible(true);
         });
 
         twoPlayerButton.addActionListener(e -> {
             selectedPlayers = 2;
-            onePlayerButton.setBackground(Color.LIGHT_GRAY);
-            twoPlayerButton.setBackground(Color.RED);
             onePlayerButton.setVisible(false);
             twoPlayerButton.setVisible(false);
+            leaderboardButton.setVisible(true);
         });
 
         mapButton.addActionListener(e -> {

@@ -36,6 +36,8 @@ public class App {
         TwoPlayerGameController twoPlayerGameController = new TwoPlayerGameController(twoPlayerModel, twoPlayerGamePanel);
         menuPanel.getPlayButton().addActionListener(e -> {
 
+            if (menuPanel.getSelectedPlayers() == 1) {
+
                 String playerName = JOptionPane.showInputDialog(
                         null,
                         "Nhập tên người chơi:"
@@ -46,7 +48,30 @@ public class App {
                 }
 
                 gameModel.setPlayerName(playerName);
+            }
 
+            // LUÔN chạy phần này sau khi nhập tên hợp lệ
+
+            GameMode selectedMode =
+                    menuPanel.getSelectedPlayers() == 2
+                            ? GameMode.TWO_PLAYER
+                            : GameMode.SINGLE_PLAYER;
+
+            if (selectedMode == GameMode.TWO_PLAYER) {
+
+                twoPlayerGameController.startGame();
+                cardLayout.show(mainPanel, "twoPlayerGame");
+                twoPlayerGamePanel.requestFocusInWindow();
+
+            } else {
+
+                // 1 player start
+                gameController.startGame();
+                cardLayout.show(mainPanel, "game");
+                gamePanel.requestFocusInWindow();
+            }
+
+        });
 
                 // phần code bắt đầu game giữ nguyên bên dưới...
             GameMode selectedMode =
@@ -97,7 +122,7 @@ public class App {
                 cardLayout.show(mainPanel, "game");
                 gamePanel.requestFocusInWindow();
             }
-        });
+        ;
         gamePanel.setMenuAction(() -> {
             gameController.resetGame();
             cardLayout.show(mainPanel, "menu");
