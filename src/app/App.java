@@ -40,7 +40,7 @@ public class App {
 
                 String playerName = JOptionPane.showInputDialog(
                         null,
-                        "Nhập tên người chơi:"
+                        "Enter player name:"
                 );
 
                 if(playerName == null || playerName.trim().isEmpty()){

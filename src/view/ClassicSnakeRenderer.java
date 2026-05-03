@@ -31,11 +31,12 @@ public final class ClassicSnakeRenderer {
     private static final BufferedImage BODY_TINTED_STANDARD =
             multiplyTint(BODY_IMAGE, 0.45f, 0.98f, 0.68f);
 
+    /** Desert: warm earth brown — head lighter than body so it pops on beige sand */
     private static final BufferedImage HEAD_TINTED_DESERT =
-            multiplyTint(HEAD_IMAGE, 0.92f, 0.32f, 0.22f);
+            multiplyTint(HEAD_IMAGE, 0.65f, 0.46f, 0.30f);
 
     private static final BufferedImage BODY_TINTED_DESERT =
-            multiplyTint(BODY_IMAGE, 0.92f, 0.32f, 0.22f);
+            multiplyTint(BODY_IMAGE, 0.48f, 0.34f, 0.22f);
 
     private ClassicSnakeRenderer() {
     }
@@ -72,27 +73,52 @@ public final class ClassicSnakeRenderer {
         BufferedImage headImg = desertVisual ? HEAD_TINTED_DESERT : HEAD_TINTED_STANDARD;
 
         Tile previous = head;
-        for (Tile segment : body) {
-            drawBodyConnector(graphics, previous, segment, tileSize, bodyImg);
-            drawImage(graphics, bodyImg, segment.getX(), segment.getY(), tileSize, 0);
+        for (int i = 0; i < body.size(); i++) {
+            Tile segment = body.get(i);
+
+            int deltaX = segment.getX() - previous.getX();
+            int deltaY = segment.getY() - previous.getY();
+            if (Math.abs(deltaX) + Math.abs(deltaY) != 1) {
+                deltaX = 0;
+                deltaY = 0;
+            }
+
+            double offsetX = 0;
+            double offsetY = 0;
+            if (!desertVisual) {
+                long nowMs = System.currentTimeMillis();
+                double time = nowMs / 1000.0;
+                double amplitudePx = tileSize * 0.16;
+                int perpX = -deltaY;
+                int perpY = deltaX;
+                double wave = Math.sin(time * 8.5 + i * 0.85);
+                offsetX = perpX * wave * amplitudePx;
+                offsetY = perpY * wave * amplitudePx;
+            }
+
+            drawBodyConnector(graphics, previous, segment, tileSize, bodyImg, offsetX, offsetY);
+            drawImageAtCenter(graphics, bodyImg, centerX(segment, tileSize) + offsetX, centerY(segment, tileSize) + offsetY, tileSize, 0);
             previous = segment;
         }
 
-        drawImage(graphics, headImg, head.getX(), head.getY(), tileSize, headRotation(velocityX, velocityY));
+        drawImageAtCenter(graphics, headImg, centerX(head, tileSize), centerY(head, tileSize), tileSize, headRotation(velocityX, velocityY));
     }
 
     private static void drawImage(Graphics2D graphics, BufferedImage image, int gridX, int gridY, int tileSize, double rotation) {
-        int drawX = gridX * tileSize;
-        int drawY = gridY * tileSize;
+        drawImageAtCenter(graphics, image, gridX * tileSize + tileSize / 2.0, gridY * tileSize + tileSize / 2.0, tileSize, rotation);
+    }
+
+    private static void drawImageAtCenter(Graphics2D graphics, BufferedImage image, double centerX, double centerY, int tileSize, double rotation) {
         AffineTransform previousTransform = graphics.getTransform();
 
-        graphics.translate(drawX + tileSize / 2.0, drawY + tileSize / 2.0);
+        graphics.translate(centerX, centerY);
         graphics.rotate(rotation);
         graphics.drawImage(image, -tileSize / 2, -tileSize / 2, tileSize, tileSize, null);
         graphics.setTransform(previousTransform);
     }
 
-    private static void drawBodyConnector(Graphics2D graphics, Tile start, Tile end, int tileSize, BufferedImage bodyImage) {
+    private static void drawBodyConnector(Graphics2D graphics, Tile start, Tile end, int tileSize, BufferedImage bodyImage,
+                                          double endOffsetX, double endOffsetY) {
         int deltaX = end.getX() - start.getX();
         int deltaY = end.getY() - start.getY();
 
@@ -100,13 +126,13 @@ public final class ClassicSnakeRenderer {
             return;
         }
 
-        int centerStartX = start.getX() * tileSize + tileSize / 2;
-        int centerStartY = start.getY() * tileSize + tileSize / 2;
-        int centerEndX = end.getX() * tileSize + tileSize / 2;
-        int centerEndY = end.getY() * tileSize + tileSize / 2;
+        double centerStartX = centerX(start, tileSize);
+        double centerStartY = centerY(start, tileSize);
+        double centerEndX = centerX(end, tileSize) + endOffsetX;
+        double centerEndY = centerY(end, tileSize) + endOffsetY;
 
-        int connectorCenterX = (centerStartX + centerEndX) / 2;
-        int connectorCenterY = (centerStartY + centerEndY) / 2;
+        int connectorCenterX = (int) Math.round((centerStartX + centerEndX) / 2.0);
+        int connectorCenterY = (int) Math.round((centerStartY + centerEndY) / 2.0);
         int connectorWidth = deltaX != 0 ? tileSize + tileSize / 2 : tileSize;
         int connectorHeight = deltaY != 0 ? tileSize + tileSize / 2 : tileSize;
 
@@ -118,6 +144,14 @@ public final class ClassicSnakeRenderer {
                 connectorHeight,
                 null
         );
+    }
+
+    private static double centerX(Tile tile, int tileSize) {
+        return tile.getX() * tileSize + tileSize / 2.0;
+    }
+
+    private static double centerY(Tile tile, int tileSize) {
+        return tile.getY() * tileSize + tileSize / 2.0;
     }
 
     private static BufferedImage multiplyTint(BufferedImage source, float red, float green, float blue) {

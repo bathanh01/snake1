@@ -51,7 +51,7 @@ public class    MenuPanel extends JPanel {
         add(modeButton);
 
 
-        final JButton leaderboardButton = new JButton("Bảng xếp hạng");
+        final JButton leaderboardButton = new JButton("Rankings");
         leaderboardButton.setBounds(200,330,200,50); // khác vị trí, không đè Play
         leaderboardButton.setFont(new Font("Arial", Font.BOLD, 18));
         add(leaderboardButton);
