@@ -75,29 +75,8 @@ public final class ClassicSnakeRenderer {
         Tile previous = head;
         for (int i = 0; i < body.size(); i++) {
             Tile segment = body.get(i);
-
-            int deltaX = segment.getX() - previous.getX();
-            int deltaY = segment.getY() - previous.getY();
-            if (Math.abs(deltaX) + Math.abs(deltaY) != 1) {
-                deltaX = 0;
-                deltaY = 0;
-            }
-
-            double offsetX = 0;
-            double offsetY = 0;
-            if (!desertVisual) {
-                long nowMs = System.currentTimeMillis();
-                double time = nowMs / 1000.0;
-                double amplitudePx = tileSize * 0.16;
-                int perpX = -deltaY;
-                int perpY = deltaX;
-                double wave = Math.sin(time * 8.5 + i * 0.85);
-                offsetX = perpX * wave * amplitudePx;
-                offsetY = perpY * wave * amplitudePx;
-            }
-
-            drawBodyConnector(graphics, previous, segment, tileSize, bodyImg, offsetX, offsetY);
-            drawImageAtCenter(graphics, bodyImg, centerX(segment, tileSize) + offsetX, centerY(segment, tileSize) + offsetY, tileSize, 0);
+            drawBodyConnector(graphics, previous, segment, tileSize, bodyImg, 0, 0);
+            drawImageAtCenter(graphics, bodyImg, centerX(segment, tileSize), centerY(segment, tileSize), tileSize, 0);
             previous = segment;
         }
 
